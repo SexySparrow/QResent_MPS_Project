@@ -53,7 +53,8 @@ class _LoginDemoState extends State<LoginDemo> {
                 decoration: InputDecoration(
                     border: OutlineInputBorder(),
                     labelText: 'Email',
-                    hintText: 'Enter valid email id as abc@gmail.com'),
+                    hintText:
+                        'Enter valid email id as name.surname@stud.acs.upb.ro'),
               ),
             ),
             Padding(
@@ -96,7 +97,7 @@ class _LoginDemoState extends State<LoginDemo> {
             SizedBox(
               height: 130,
             ),
-            Text('New User? Create Account')
+            //Text('New User? Create Account')
           ],
         ),
       ),
