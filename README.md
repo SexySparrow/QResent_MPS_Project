@@ -6,9 +6,9 @@ Project Manager - Adrian Brabete
 
 Team Leader - Andreea Trasnea
 
-Developer - Bogdan Popescu
+Developer/Tester - Bogdan Popescu
 
-Developer - Stefan Constandache
+Developer/Tester - Stefan Constandache
 
 Developer/Tester - Andreea Pantelimon
 
