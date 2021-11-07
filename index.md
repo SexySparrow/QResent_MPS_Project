@@ -56,6 +56,6 @@ The **QResent** application will:
 
 **Usage scenario**: The teacher generates a QR code halfway through the course to display by sharing their screen or using the projector. The QR code will be then scanned by students after which they will be added on the active attendance list. The list can be exported by the teacher at the end of the activity.
 
-## Realeases
+## Releases
 ---
-No realease is available yet.
+No release is available yet.
