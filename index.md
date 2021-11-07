@@ -1,13 +1,10 @@
-## QResent Github Page
-
-
-### Description
+## Description
 ---
   Attendance in the faculty activities, course, seminar, and laboratory stands as the basis of how we determine students' involvement.
 QResent aims to modernize the current way many faculties use to create and monitor attendance. The application uses as its basis QR codes, that act as a way to check into the sessions that the faculty organizes. Teachers can use the app to generate the codes and show them from their laptops or browsers on the projector for students to scan with their mobile devices. In addition to this, the teachers can monitor the students' involvement and generate statistics with the relevant data.
 
 
-### The Team behind the project
+## The Team behind the project
 ---
 
 | Member              | Role                  |
@@ -18,7 +15,7 @@ QResent aims to modernize the current way many faculties use to create and monit
 | Stefan Constandache | Developer/Tester      |
 | Andreea Pantelimon  | Developer/Tester      |
 
-### The Software Stack 
+## The Software Stack 
 ---
 <dl>
   <dt>Dart</dt>
@@ -29,10 +26,10 @@ QResent aims to modernize the current way many faculties use to create and monit
   <dd>The database holds the attendance information about the students.</dd>
 </dl>
 
-### Functionality
+## Functionality
 ---
 
-The QResent application will:
+The **QResent** application will:
 
 - Accommodate three user types:
   - **Administrator**:  privileged user who manages users and the database.
@@ -57,6 +54,6 @@ The QResent application will:
 
 **Usage scenario**: The teacher generates halfway through the course a QR code to display on the share screen for online or the projector for offline, which is scanned by students and so they are entered on the active attendance list. The list can be exported by the teacher at the end of the activity.
 
-### Realeases
+## Realeases
 ---
 No realease is available yet.
