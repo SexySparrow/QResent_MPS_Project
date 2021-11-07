@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "312931418962",
+    "project_id": "qresent-29065",
+    "storage_bucket": "qresent-29065.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:312931418962:android:ac101ee20a06623d41b08b",
+        "android_client_info": {
+          "package_name": "com.example.qresent"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "312931418962-reufh2h95kgmc1dndisjtb4li3vi6umj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDMY7BwIEcjAbrd7FUaiSqLryxf-DkXjoQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "312931418962-reufh2h95kgmc1dndisjtb4li3vi6umj.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
