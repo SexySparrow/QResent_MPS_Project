@@ -1,106 +1,221 @@
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'HomePage.dart';
+import 'package:flutter/painting.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'student_dashboard.dart';
+import 'model/user_model.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: LoginDemo(),
+      home: LoginScreen(),
     );
   }
 }
 
-class LoginDemo extends StatefulWidget {
+class LoginScreen extends StatefulWidget {
+  const LoginScreen({Key? key}) : super(key: key);
+
   @override
-  _LoginDemoState createState() => _LoginDemoState();
+  _LoginScreenState createState() => _LoginScreenState();
 }
 
-class _LoginDemoState extends State<LoginDemo> {
+class _LoginScreenState extends State<LoginScreen> {
+  final _auth = FirebaseAuth.instance;
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: Text("Login Page"),
+        centerTitle: true,
+        title: const Text(
+          "QResent",
+        ),
       ),
       body: SingleChildScrollView(
         child: Column(
           children: <Widget>[
             Padding(
-              padding: const EdgeInsets.only(top: 60.0),
-              child: Center(
-                child: Container(
-                    width: 200,
-                    height: 150,
-                    /*decoration: BoxDecoration(
-                        color: Colors.red,
-                        borderRadius: BorderRadius.circular(50.0)),*/
-                    child: Image.asset('images/flutter-logo.png')),
-              ),
-            ),
-            Padding(
-              //padding: const EdgeInsets.only(left:15.0,right: 15.0,top:0,bottom: 0),
-              padding: EdgeInsets.symmetric(horizontal: 15),
-              child: TextField(
-                decoration: InputDecoration(
-                    border: OutlineInputBorder(),
-                    labelText: 'Email',
-                    hintText:
-                        'Enter valid email id as name.surname@stud.acs.upb.ro'),
-              ),
-            ),
-            Padding(
               padding: const EdgeInsets.only(
-                  left: 15.0, right: 15.0, top: 15, bottom: 0),
-              //padding: EdgeInsets.symmetric(horizontal: 15),
-              child: TextField(
-                obscureText: true,
-                decoration: InputDecoration(
-                    border: OutlineInputBorder(),
-                    labelText: 'Password',
-                    hintText: 'Enter secure password'),
+                top: 60.0,
+                bottom: 30.0,
               ),
-            ),
-            FlatButton(
-              onPressed: () {
-                //TODO FORGOT PASSWORD SCREEN GOES HERE
-              },
-              child: Text(
-                'Forgot Password',
-                style: TextStyle(color: Colors.blue, fontSize: 15),
-              ),
-            ),
-            Container(
-              height: 50,
-              width: 250,
-              decoration: BoxDecoration(
-                  color: Colors.blue, borderRadius: BorderRadius.circular(20)),
-              child: FlatButton(
-                onPressed: () {
-                  Navigator.push(
-                      context, MaterialPageRoute(builder: (_) => HomePage()));
-                },
-                child: Text(
-                  'Login',
-                  style: TextStyle(color: Colors.white, fontSize: 25),
+              child: Center(
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(30),
+                  child: Image.asset(
+                    'assets/images/img_login.png',
+                    height: 200,
+                    width: 200,
+                  ),
                 ),
               ),
             ),
-            SizedBox(
-              height: 130,
+            Form(
+              key: _formKey,
+              child: Column(
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      top: 30.0,
+                      bottom: 30.0,
+                      left: 50.0,
+                      right: 50.0,
+                    ),
+                    child: TextFormField(
+                      controller: emailController,
+                      keyboardType: TextInputType.emailAddress,
+                      decoration: InputDecoration(
+                        prefixIcon: const Icon(Icons.email),
+                        contentPadding:
+                            const EdgeInsets.fromLTRB(20, 15, 20, 15),
+                        hintText: "Email",
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                      validator: (input) {
+                        if (input!.isEmpty) {
+                          return 'Please enter an email';
+                        }
+
+                        if (!RegExp("^[a-zA-Z0-9++.-]+@[a-zA-Z0-9.-]+.[a-z].")
+                            .hasMatch(input)) {
+                          return 'Please enter a valid email';
+                        }
+
+                        return null;
+                      },
+                      textInputAction: TextInputAction.next,
+                      onSaved: (input) => emailController.text = input!,
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      bottom: 30.0,
+                      left: 50.0,
+                      right: 50.0,
+                    ),
+                    child: TextFormField(
+                      controller: passwordController,
+                      textInputAction: TextInputAction.done,
+                      decoration: InputDecoration(
+                        prefixIcon: const Icon(Icons.vpn_key),
+                        contentPadding:
+                            const EdgeInsets.fromLTRB(20, 15, 20, 15),
+                        hintText: "Password",
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                      validator: (input) {
+                        if (input!.isEmpty) {
+                          return 'Please Enter Your Password';
+                        }
+                      },
+                      onSaved: (input) => passwordController.text = input!,
+                      obscureText: true,
+                    ),
+                  ),
+                ],
+              ),
             ),
-            //Text('New User? Create Account')
+            TextButton(
+              onPressed: () {
+                //TODO FORGOT PASSWORD SCREEN GOES HERE
+              },
+              child: const Text(
+                'Forgot Password',
+                style: TextStyle(
+                  color: Colors.blue,
+                  fontSize: 15,
+                ),
+              ),
+            ),
+            Material(
+              elevation: 5,
+              borderRadius: BorderRadius.circular(30),
+              color: Colors.blueAccent,
+              child: MaterialButton(
+                onPressed: () {
+                  signIn(emailController.text, passwordController.text);
+                },
+                padding: const EdgeInsets.fromLTRB(20, 15, 20, 15),
+                minWidth: 300,
+                child: const Text(
+                  "Login",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 20,
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ),
           ],
         ),
       ),
     );
+  }
+
+  Future<void> signIn(String email, String password) async {
+    final formState = _formKey.currentState;
+
+    if (formState!.validate()) {
+      formState.save();
+      await _auth
+          .signInWithEmailAndPassword(email: email, password: password)
+          .then((uid) {
+        User? user = FirebaseAuth.instance.currentUser;
+        UserModel currentUser = UserModel();
+
+        FirebaseFirestore.instance
+            .collection("Users")
+            .doc(user!.uid)
+            .get()
+            .then((DocumentSnapshot ds) {
+          currentUser = UserModel.fromMap(ds.data());
+
+          if (currentUser.accessLevel == '0') {
+            Navigator.of(context).pushReplacement(MaterialPageRoute(
+                builder: (context) => const StudentDashboard()));
+            Fluttertoast.showToast(msg: "Login Successful");
+          } else if (currentUser.accessLevel == '1') {
+            Navigator.of(context).pushReplacement(
+                // De schimbat StudentDashboard cu clasa TeacherDashboard cand aceasta o sa fie creata
+                MaterialPageRoute(
+                    builder: (context) => const StudentDashboard()));
+            Fluttertoast.showToast(msg: "Login Successful");
+          } else if (currentUser.accessLevel == '2') {
+            Navigator.of(context).pushReplacement(
+                // De schimbat StudentDashboard cu clasa AdminDashboard cand aceasta o sa fie creata
+                MaterialPageRoute(
+                    builder: (context) => const StudentDashboard()));
+            Fluttertoast.showToast(msg: "Login Successful");
+          }
+        });
+      }).catchError((e) {
+        Fluttertoast.showToast(msg: e!.message);
+      });
+    }
   }
 }
