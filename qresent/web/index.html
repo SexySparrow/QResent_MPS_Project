@@ -35,33 +35,28 @@
 <body>
 
   <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-auth.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-firestore.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-storage.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-firestore.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-database.js"></script>
 
-  <script>
-    // Import the functions you need from the SDKs you need
-
-    // TODO: Add SDKs for Firebase products that you want to use
-    // https://firebase.google.com/docs/web/setup#available-libraries
-
-    // Your web app's Firebase configuration
-    const firebaseConfig = {
-      apiKey: "...",
-      authDomain: "...",
-      projectId: "...",
-      storageBucket: "...",
-      messagingSenderId: "...",
-      appId: "..."
+  <script type="module">
+    var firebaseConfig = {
+      apiKey: "AIzaSyBRZVpUFIn7JHI2h-u6DJyY7anJ-uzFzFg",
+      authDomain: "qresent-29065.firebaseapp.com",
+      projectId: "qresent-29065",
+      storageBucket: "qresent-29065.appspot.com",
+      messagingSenderId: "312931418962",
+      appId: "1:312931418962:web:a8029837038e1a4441b08b",
+      measurementId: "G-C4GQWTSPJL"
     };
-
+  
     // Initialize Firebase
     firebase.initializeApp(firebaseConfig);
   </script>
-  </script>
+  
   <!-- This script installs service_worker.js to provide PWA functionality to
-       application. For more information, see:
-       https://developers.google.com/web/fundamentals/primers/service-workers -->
+  application. For more information, see:
+  https://developers.google.com/web/fundamentals/primers/service-workers -->
   <script>
     var serviceWorkerVersion = null;
     var scriptLoaded = false;
