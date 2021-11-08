@@ -199,13 +199,13 @@ class _LoginScreenState extends State<LoginScreen> {
             Fluttertoast.showToast(msg: "Login Successful");
           } else if (currentUser.accessLevel == '1') {
             Navigator.of(context).pushReplacement(
-                // De schimbat StudentDashboard cu clasa TeacherDashboard cand aceasta o sa fie creata
+                // To change StudentDashboard with TeacherDashboard when this one will be created
                 MaterialPageRoute(
                     builder: (context) => const StudentDashboard()));
             Fluttertoast.showToast(msg: "Login Successful");
           } else if (currentUser.accessLevel == '2') {
             Navigator.of(context).pushReplacement(
-                // De schimbat StudentDashboard cu clasa AdminDashboard cand aceasta o sa fie creata
+                // To change StudentDashboard with AdminDashboard when this one will be created
                 MaterialPageRoute(
                     builder: (context) => const StudentDashboard()));
             Fluttertoast.showToast(msg: "Login Successful");
