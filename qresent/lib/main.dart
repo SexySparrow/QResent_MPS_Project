@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:qresent/teacher_dashboard.dart';
 import 'student_dashboard.dart';
 import 'model/user_model.dart';
 
@@ -201,7 +202,7 @@ class _LoginScreenState extends State<LoginScreen> {
             Navigator.of(context).pushReplacement(
                 // To change StudentDashboard with TeacherDashboard when this one will be created
                 MaterialPageRoute(
-                    builder: (context) => const StudentDashboard()));
+                    builder: (context) => const TeacherDashboard()));
             Fluttertoast.showToast(msg: "Login Successful");
           } else if (currentUser.accessLevel == '2') {
             Navigator.of(context).pushReplacement(
