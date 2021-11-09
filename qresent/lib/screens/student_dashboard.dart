@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:qresent/main.dart';
+import 'login_screen.dart';
 
 class StudentDashboard extends StatefulWidget {
   const StudentDashboard({Key? key}) : super(key: key);
