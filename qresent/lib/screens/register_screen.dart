@@ -68,7 +68,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             ),
                             validator: (input) {
                               if (input!.isEmpty) {
-                                return 'First Name cannot be Empty';
+                                return 'Please enter First Name';
                               }
                             },
                             textInputAction: TextInputAction.next,
@@ -99,7 +99,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             ),
                             validator: (input) {
                               if (input!.isEmpty) {
-                                return 'Last Name cannot be Empty';
+                                return 'Please enter Last Name';
                               }
                             },
                             textInputAction: TextInputAction.next,
@@ -188,7 +188,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           width: 300,
                           child: TextFormField(
                             controller: confirmPasswordController,
-                            textInputAction: TextInputAction.done,
+                            textInputAction: TextInputAction.next,
                             decoration: InputDecoration(
                               prefixIcon: const Icon(Icons.vpn_key),
                               contentPadding:
@@ -220,39 +220,45 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           left: 50.0,
                           right: 50.0,
                         ),
-                        child: Container(
-                          padding: const EdgeInsets.only(
-                            left: 16,
-                            right: 16,
-                          ),
-                          decoration: BoxDecoration(
-                            border: Border.all(color: Colors.grey, width: 1),
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: DropdownButton<String>(
-                            hint: const Text("Select User Type"),
-                            value: dropdownValue,
-                            icon: const Icon(Icons.arrow_drop_down),
-                            iconSize: 30,
-                            elevation: 16,
-                            isExpanded: true,
-                            style: const TextStyle(
-                              color: Colors.blueAccent,
-                              fontSize: 20,
+                        child: DropdownButtonFormField<String>(
+                          decoration: InputDecoration(
+                            contentPadding: const EdgeInsets.only(
+                              left: 16,
+                              top: 10,
+                              bottom: 10,
                             ),
-                            underline: const SizedBox(),
-                            onChanged: (newValue) {
-                              setState(() {
-                                dropdownValue = newValue!;
-                              });
-                            },
-                            items: listItem.map((value) {
-                              return DropdownMenuItem<String>(
-                                value: value,
-                                child: Text(value),
-                              );
-                            }).toList(),
+                            prefixIcon:
+                                const Icon(Icons.supervised_user_circle),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
                           ),
+                          hint: const Text("Select User Type"),
+                          value: dropdownValue,
+                          icon: const Icon(Icons.arrow_drop_down),
+                          iconSize: 30,
+                          elevation: 16,
+                          isExpanded: true,
+                          validator: (input) {
+                            if (input == null) {
+                              return 'Please Select a User Type';
+                            }
+                          },
+                          style: const TextStyle(
+                            color: Colors.black87,
+                            fontSize: 16,
+                          ),
+                          onChanged: (newValue) {
+                            setState(() {
+                              dropdownValue = newValue!;
+                            });
+                          },
+                          items: listItem.map((value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              child: Text(value),
+                            );
+                          }).toList(),
                         ),
                       ),
                     ],
@@ -275,7 +281,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       padding: const EdgeInsets.fromLTRB(20, 15, 20, 15),
                       minWidth: 300,
                       child: const Text(
-                        "Register USer",
+                        "Register User",
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           fontSize: 20,
@@ -295,15 +301,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
   }
 
   void signUp(String email, String password) async {
-    if (_formKey.currentState!.validate() && dropdownValue != null) {
+    if (_formKey.currentState!.validate()) {
       await _auth
           .createUserWithEmailAndPassword(email: email, password: password)
           .then((value) => postDetailsToFirestore())
           .catchError((e) {
         Fluttertoast.showToast(msg: e!.message);
       });
-    } else if (dropdownValue == null) {
-      Fluttertoast.showToast(msg: "Please select a user type");
     }
   }
 
