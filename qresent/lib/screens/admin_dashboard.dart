@@ -67,37 +67,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
                       builder: (context) => const RegisterScreen()));
                 },
                 child: const Text(
-                  "Register Student",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 18,
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-            ),
-            Container(
-              margin: const EdgeInsets.only(
-                top: 10,
-                bottom: 10,
-              ),
-              width: 200,
-              decoration: BoxDecoration(
-                color: Colors.blueAccent,
-                borderRadius: BorderRadius.circular(20),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.blue[500]!.withOpacity(0.5),
-                    spreadRadius: 3,
-                    blurRadius: 10,
-                  ),
-                ],
-              ),
-              child: MaterialButton(
-                onPressed: () {},
-                child: const Text(
-                  "Edit Student",
+                  "Register User",
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 18,
@@ -136,37 +106,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
               child: MaterialButton(
                 onPressed: () {},
                 child: const Text(
-                  "Register Teacher",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 18,
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-            ),
-            Container(
-              margin: const EdgeInsets.only(
-                top: 10,
-                bottom: 10,
-              ),
-              width: 200,
-              decoration: BoxDecoration(
-                color: Colors.blueAccent,
-                borderRadius: BorderRadius.circular(20),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.blue[500]!.withOpacity(0.5),
-                    spreadRadius: 3,
-                    blurRadius: 10,
-                  ),
-                ],
-              ),
-              child: MaterialButton(
-                onPressed: () {},
-                child: const Text(
-                  "Edit Teacher",
+                  "Edit User",
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 18,
