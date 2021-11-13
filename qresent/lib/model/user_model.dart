@@ -6,7 +6,7 @@ class UserModel {
 
   UserModel({this.email, this.firstName, this.lastName, this.accessLevel});
 
-  //date primite de pe firebase
+  //Data fetched from firestore
   factory UserModel.fromMap(map) {
     return UserModel(
       email: map['Email'],
@@ -16,7 +16,7 @@ class UserModel {
     );
   }
 
-  // date trimise catre firebase
+  // Data sent to firestre
   Map<String, dynamic> toMap() {
     return {
       'Email': email,

@@ -220,45 +220,48 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           left: 50.0,
                           right: 50.0,
                         ),
-                        child: DropdownButtonFormField<String>(
-                          decoration: InputDecoration(
-                            contentPadding: const EdgeInsets.only(
-                              left: 16,
-                              top: 10,
-                              bottom: 10,
+                        child: SizedBox(
+                          width: 300,
+                          child: DropdownButtonFormField<String>(
+                            decoration: InputDecoration(
+                              contentPadding: const EdgeInsets.only(
+                                left: 16,
+                                top: 10,
+                                bottom: 10,
+                              ),
+                              prefixIcon:
+                                  const Icon(Icons.supervised_user_circle),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
                             ),
-                            prefixIcon:
-                                const Icon(Icons.supervised_user_circle),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
+                            hint: const Text("Select User Type"),
+                            value: dropdownValue,
+                            icon: const Icon(Icons.arrow_drop_down),
+                            iconSize: 30,
+                            elevation: 16,
+                            isExpanded: true,
+                            validator: (input) {
+                              if (input == null) {
+                                return 'Please Select a User Type';
+                              }
+                            },
+                            style: const TextStyle(
+                              color: Colors.black87,
+                              fontSize: 16,
                             ),
+                            onChanged: (newValue) {
+                              setState(() {
+                                dropdownValue = newValue!;
+                              });
+                            },
+                            items: listItem.map((value) {
+                              return DropdownMenuItem<String>(
+                                value: value,
+                                child: Text(value),
+                              );
+                            }).toList(),
                           ),
-                          hint: const Text("Select User Type"),
-                          value: dropdownValue,
-                          icon: const Icon(Icons.arrow_drop_down),
-                          iconSize: 30,
-                          elevation: 16,
-                          isExpanded: true,
-                          validator: (input) {
-                            if (input == null) {
-                              return 'Please Select a User Type';
-                            }
-                          },
-                          style: const TextStyle(
-                            color: Colors.black87,
-                            fontSize: 16,
-                          ),
-                          onChanged: (newValue) {
-                            setState(() {
-                              dropdownValue = newValue!;
-                            });
-                          },
-                          items: listItem.map((value) {
-                            return DropdownMenuItem<String>(
-                              value: value,
-                              child: Text(value),
-                            );
-                          }).toList(),
                         ),
                       ),
                     ],

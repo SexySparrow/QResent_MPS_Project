@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:qresent/screens/register_screen.dart';
+import 'package:qresent/screens/courses_screen.dart';
 import 'login_screen.dart';
 
 class AdminDashboard extends StatefulWidget {
@@ -143,7 +144,10 @@ class _AdminDashboardState extends State<AdminDashboard> {
                 ],
               ),
               child: MaterialButton(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => const CoursesScreen()));
+                },
                 child: const Text(
                   "Courses",
                   textAlign: TextAlign.center,
