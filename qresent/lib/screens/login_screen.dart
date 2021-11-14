@@ -44,7 +44,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(30),
                   child: Image.asset(
-                    'assets/images/img_login.png',
+                    "assets/images/img_login.png",
                     height: 200,
                     width: 200,
                   ),
@@ -78,12 +78,12 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                         validator: (input) {
                           if (input!.isEmpty) {
-                            return 'Please enter an email';
+                            return "Please enter an email";
                           }
 
                           if (!RegExp("^[a-zA-Z0-9++.-]+@[a-zA-Z0-9.-]+.[a-z].")
                               .hasMatch(input)) {
-                            return 'Please enter a valid email';
+                            return "Please enter a valid email";
                           }
                         },
                         textInputAction: TextInputAction.next,
@@ -113,7 +113,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                         validator: (input) {
                           if (input!.isEmpty) {
-                            return 'Please Enter Your Password';
+                            return "Please Enter Your Password";
                           }
                         },
                         onSaved: (input) => passwordController.text = input!,
@@ -150,7 +150,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 //TODO FORGOT PASSWORD SCREEN GOES HERE
               },
               child: const Text(
-                'Forgot Password',
+                "Forgot Password",
                 style: TextStyle(
                   color: Colors.blue,
                   fontSize: 15,

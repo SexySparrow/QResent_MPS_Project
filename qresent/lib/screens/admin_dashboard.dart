@@ -30,7 +30,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'Dashboard',
+          "Dashboard",
         ),
         actions: [
           IconButton(

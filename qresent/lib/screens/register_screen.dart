@@ -68,7 +68,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             ),
                             validator: (input) {
                               if (input!.isEmpty) {
-                                return 'Please enter First Name';
+                                return "Please enter First Name";
                               }
                             },
                             textInputAction: TextInputAction.next,
@@ -99,7 +99,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             ),
                             validator: (input) {
                               if (input!.isEmpty) {
-                                return 'Please enter Last Name';
+                                return "Please enter Last Name";
                               }
                             },
                             textInputAction: TextInputAction.next,
@@ -130,13 +130,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             ),
                             validator: (input) {
                               if (input!.isEmpty) {
-                                return 'Please enter an email';
+                                return "Please enter an email";
                               }
 
                               if (!RegExp(
                                       "^[a-zA-Z0-9++.-]+@[a-zA-Z0-9.-]+.[a-z].")
                                   .hasMatch(input)) {
-                                return 'Please enter a valid email';
+                                return "Please enter a valid email";
                               }
                             },
                             textInputAction: TextInputAction.next,
@@ -166,7 +166,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             ),
                             validator: (input) {
                               if (input!.isEmpty) {
-                                return 'Please Enter Password';
+                                return "Please Enter Password";
                               }
                               if (input.length < 6) {
                                 return ("Password should be min. 6 characters long");
@@ -193,7 +193,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               prefixIcon: const Icon(Icons.vpn_key),
                               contentPadding:
                                   const EdgeInsets.fromLTRB(20, 15, 20, 15),
-                              hintText: 'Confirm Password',
+                              hintText: "Confirm Password",
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(10),
                               ),
@@ -201,11 +201,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             validator: (input) {
                               if (input!.isEmpty &&
                                   passwordController.text != "") {
-                                return 'Please Confirm Your Password';
+                                return "Please Confirm Your Password";
                               }
                               if (passwordController.text.length >= 6 &&
                                   passwordController.text != input) {
-                                return 'Password dont\'t match';
+                                return "Password dont't match";
                               }
                             },
                             onSaved: (input) =>
@@ -243,7 +243,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             isExpanded: true,
                             validator: (input) {
                               if (input == null) {
-                                return 'Please Select a User Type';
+                                return "Please Select a User Type";
                               }
                             },
                             style: const TextStyle(
@@ -323,10 +323,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
     userModel.email = user!.email;
     userModel.firstName = firstNameController.text;
     userModel.lastName = lastNameController.text;
-    if (dropdownValue == 'Student') {
-      userModel.accessLevel = '0';
-    } else if (dropdownValue == 'Teacher') {
-      userModel.accessLevel = '1';
+    if (dropdownValue == "Student") {
+      userModel.accessLevel = "0";
+    } else if (dropdownValue == "Teacher") {
+      userModel.accessLevel = "1";
     }
 
     await firebaseFirestore
