@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:qresent/model/course_model.dart';
 import 'package:qresent/model/user_model.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -12,17 +13,105 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
-  final _formKey = GlobalKey<FormState>();
-
+  CollectionReference coursesRef =
+      FirebaseFirestore.instance.collection("Courses");
   final _auth = FirebaseAuth.instance;
+
+  final _formKey = GlobalKey<FormState>();
 
   final firstNameController = TextEditingController();
   final lastNameController = TextEditingController();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
+
   String? dropdownValue;
+
   List listItem = ["Student", "Teacher"];
+  List<CourseModel> _coursesList = [];
+  List<CourseModel> _coursesListForUserType = [];
+  List<bool> _isChecked = [];
+
+  @override
+  void initState() {
+    super.initState();
+    getCourses();
+  }
+
+  getCourses() async {
+    List<CourseModel> courseListTemp = [];
+    await coursesRef.get().then((QuerySnapshot snapshot) {
+      for (var documentSnapshot in snapshot.docs) {
+        courseListTemp.add(CourseModel.fromMap(documentSnapshot.data()));
+      }
+    });
+
+    setState(() {
+      _coursesList = courseListTemp;
+    });
+  }
+
+  getCoursesForUseType() {
+    if (dropdownValue == "Teacher") {
+      List<CourseModel> _coursesListForUserTypeTemp = [];
+      for (var doc in _coursesList) {
+        if (doc.assignedProfessor == "") {
+          _coursesListForUserTypeTemp.add(doc);
+        }
+      }
+
+      setState(() {
+        _coursesListForUserType = _coursesListForUserTypeTemp;
+      });
+    } else {
+      setState(() {
+        _coursesListForUserType = _coursesList;
+      });
+    }
+
+    _isChecked = List<bool>.filled(_coursesListForUserType.length, false);
+  }
+
+  createCoursesAlertDialog(BuildContext context) {
+    return showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          scrollable: true,
+          title: Text(
+            "Select Courses for $dropdownValue",
+            textAlign: TextAlign.center,
+          ),
+          content: SingleChildScrollView(
+            child: Material(
+              child: MyDialogContent(
+                courses: _coursesListForUserType,
+                dropdownValue: dropdownValue,
+                isChecked: _isChecked,
+                onChange: (val) {
+                  _isChecked = val;
+                  print(_isChecked);
+                },
+              ),
+            ),
+          ),
+          actions: <Widget>[
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text("Confirm"),
+                ),
+              ],
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -254,6 +343,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               setState(() {
                                 dropdownValue = newValue!;
                               });
+                              getCoursesForUseType();
                             },
                             items: listItem.map((value) {
                               return DropdownMenuItem<String>(
@@ -265,6 +355,41 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         ),
                       ),
                     ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(
+                    top: 30.0,
+                    left: 50.0,
+                    right: 50.0,
+                  ),
+                  child: Material(
+                    elevation: 5,
+                    borderRadius: BorderRadius.circular(30),
+                    color:
+                        dropdownValue != null ? Colors.blueAccent : Colors.grey,
+                    child: MaterialButton(
+                      onPressed: () {
+                        if (dropdownValue == null) {
+                          Fluttertoast.showToast(
+                              msg: "Please select a user type first");
+                          return;
+                        } else {
+                          createCoursesAlertDialog(context);
+                        }
+                      },
+                      padding: const EdgeInsets.fromLTRB(20, 15, 20, 15),
+                      minWidth: 300,
+                      child: const Text(
+                        "Select Courses",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 20,
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
                   ),
                 ),
                 Padding(
@@ -317,16 +442,32 @@ class _RegisterScreenState extends State<RegisterScreen> {
   postDetailsToFirestore() async {
     FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
     User? user = _auth.currentUser;
+    List<String> courses = [];
 
     UserModel userModel = UserModel();
+
+    for (var index = 0; index < _coursesListForUserType.length; index++) {
+      if (_isChecked[index]) {
+        courses.add(_coursesListForUserType[index].uid);
+      }
+    }
 
     userModel.email = user!.email;
     userModel.firstName = firstNameController.text;
     userModel.lastName = lastNameController.text;
+    userModel.assignedCourses = courses;
     if (dropdownValue == "Student") {
       userModel.accessLevel = "0";
     } else if (dropdownValue == "Teacher") {
       userModel.accessLevel = "1";
+    }
+
+    if (dropdownValue == "Teacher") {
+      for (var uid in courses) {
+        coursesRef.doc(uid).update({
+          "AssignedProfessor": "${userModel.firstName} ${userModel.lastName}"
+        });
+      }
     }
 
     await firebaseFirestore
@@ -336,5 +477,73 @@ class _RegisterScreenState extends State<RegisterScreen> {
     Fluttertoast.showToast(msg: "Account created successfully");
 
     Navigator.pop(context);
+  }
+}
+
+class MyDialogContent extends StatefulWidget {
+  const MyDialogContent(
+      {Key? key,
+      required this.courses,
+      required this.dropdownValue,
+      required this.isChecked,
+      this.onChange})
+      : super(key: key);
+
+  final ValueChanged<List<bool>>? onChange;
+  final List<CourseModel> courses;
+  final String? dropdownValue;
+  final List<bool> isChecked;
+
+  @override
+  _MyDialogContentState createState() => _MyDialogContentState();
+}
+
+class _MyDialogContentState extends State<MyDialogContent> {
+  _getContent() {
+    if (widget.courses.isEmpty) {
+      return Container();
+    }
+
+    return Column(
+      children: [
+        Container(
+          color: Colors.white,
+          height:
+              (MediaQuery.of(context).size.height / 10) * widget.courses.length,
+          width: 300,
+          child: Column(
+            children: [
+              Container(
+                padding: const EdgeInsets.only(
+                  bottom: 20,
+                ),
+                child: ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: widget.courses.length,
+                    itemBuilder: (context, index) {
+                      return CheckboxListTile(
+                        value: widget.isChecked[index],
+                        title: Text(widget.courses[index].uid),
+                        onChanged: (val) {
+                          setState(
+                            () {
+                              widget.isChecked[index] = val as bool;
+                              widget.onChange!(widget.isChecked);
+                            },
+                          );
+                        },
+                      );
+                    }),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return _getContent();
   }
 }

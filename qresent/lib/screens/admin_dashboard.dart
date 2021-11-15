@@ -18,8 +18,8 @@ class _AdminDashboardState extends State<AdminDashboard> {
   Future<void> signOut() async {
     await _auth.signOut().then((result) {
       Fluttertoast.showToast(msg: "Signed Out");
-      Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => const LoginScreen()));
+      Navigator.of(context)
+          .pop(MaterialPageRoute(builder: (context) => const LoginScreen()));
     }).catchError((e) {
       Fluttertoast.showToast(msg: e!.message);
     });
