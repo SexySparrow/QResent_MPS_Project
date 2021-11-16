@@ -2,15 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:qresent/main.dart';
+import 'package:qresent/screens/login_screen.dart';
+import 'package:qresent/screens/teacher_courses.dart';
 
-class StudentDashboard extends StatefulWidget {
-  const StudentDashboard({Key? key}) : super(key: key);
+class TeacherDashboard extends StatefulWidget {
+  const TeacherDashboard({Key? key}) : super(key: key);
 
   @override
-  _StudentDashboardState createState() => _StudentDashboardState();
+  _TeacherDashboardState createState() => _TeacherDashboardState();
 }
 
-class _StudentDashboardState extends State<StudentDashboard> {
+class _TeacherDashboardState extends State<TeacherDashboard> {
   final _auth = FirebaseAuth.instance;
 
   Future<void> signOut() async {
@@ -27,7 +29,15 @@ class _StudentDashboardState extends State<StudentDashboard> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Home Page'),
+        title: const Text('Teacher Home Page'),
+        actions: [
+          IconButton(
+            onPressed: () {
+              signOut();
+            },
+            icon: const Icon(Icons.logout),
+          )
+        ],
       ),
       body: Center(
         child: Container(
@@ -37,15 +47,18 @@ class _StudentDashboardState extends State<StudentDashboard> {
             color: Colors.blue,
             borderRadius: BorderRadius.circular(10),
           ),
-          child: TextButton(
+          child: MaterialButton(
             onPressed: () {
-              signOut();
+              Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => const TeacherCourses()));
             },
             child: const Text(
-              'SignOut',
+              "Courses",
+              textAlign: TextAlign.center,
               style: TextStyle(
+                fontSize: 18,
                 color: Colors.white,
-                fontSize: 25,
+                fontWeight: FontWeight.bold,
               ),
             ),
           ),

@@ -2,15 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:qresent/main.dart';
+import 'package:qresent/screens/login_screen.dart';
 
-class TeacherDashboard extends StatefulWidget {
-  const TeacherDashboard({Key? key}) : super(key: key);
+class StudentDashboard extends StatefulWidget {
+  const StudentDashboard({Key? key}) : super(key: key);
 
   @override
-  _TeacherDashboardState createState() => _TeacherDashboardState();
+  _StudentDashboardState createState() => _StudentDashboardState();
 }
 
-class _TeacherDashboardState extends State<TeacherDashboard> {
+class _StudentDashboardState extends State<StudentDashboard> {
   final _auth = FirebaseAuth.instance;
 
   Future<void> signOut() async {
@@ -27,7 +28,7 @@ class _TeacherDashboardState extends State<TeacherDashboard> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Teacher Home Page'),
+        title: const Text('Home Page'),
       ),
       body: Center(
         child: Container(
