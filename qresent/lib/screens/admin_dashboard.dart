@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:qresent/screens/register_screen.dart';
 import 'package:qresent/screens/courses_screen.dart';
+import 'package:qresent/screens/edit_screen.dart';
 import 'login_screen.dart';
 
 class AdminDashboard extends StatefulWidget {
@@ -18,8 +19,8 @@ class _AdminDashboardState extends State<AdminDashboard> {
   Future<void> signOut() async {
     await _auth.signOut().then((result) {
       Fluttertoast.showToast(msg: "Signed Out");
-      Navigator.of(context)
-          .pop(MaterialPageRoute(builder: (context) => const LoginScreen()));
+      Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context) => const LoginScreen()));
     }).catchError((e) {
       Fluttertoast.showToast(msg: e!.message);
     });
@@ -105,7 +106,10 @@ class _AdminDashboardState extends State<AdminDashboard> {
                 ],
               ),
               child: MaterialButton(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => const EditScreen()));
+                },
                 child: const Text(
                   "Edit User",
                   textAlign: TextAlign.center,

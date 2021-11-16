@@ -153,7 +153,7 @@ class _CoursesScreenState extends State<CoursesScreen> {
 
   void addCourse(String courseName) async {
     CourseModel courseModel =
-        CourseModel(uid: courseName, assignedProfessor: "");
+        CourseModel(uid: courseName, assignedProfessor: "", information: "");
     courseModel.intervals = [];
 
     var alreadyExists = 0;

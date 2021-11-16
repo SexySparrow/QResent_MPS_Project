@@ -3,7 +3,7 @@ class UserModel {
   String? firstName;
   String? lastName;
   String? accessLevel;
-  List<String>? assignedCourses;
+  List<dynamic>? assignedCourses;
 
   UserModel(
       {this.email,

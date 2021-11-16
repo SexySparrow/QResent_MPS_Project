@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:qresent/model/course_model.dart';
 import 'package:qresent/model/user_model.dart';
+import 'dart:math';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({Key? key}) : super(key: key);
@@ -31,6 +32,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
   List<CourseModel> _coursesList = [];
   List<CourseModel> _coursesListForUserType = [];
   List<bool> _isChecked = [];
+  List<String> _courses = [];
+
+  final _random = Random();
 
   @override
   void initState() {
@@ -72,6 +76,34 @@ class _RegisterScreenState extends State<RegisterScreen> {
     _isChecked = List<bool>.filled(_coursesListForUserType.length, false);
   }
 
+  getChipCourses() {
+    List<String> _coursesTemp = [];
+    for (int index = 0; index < _isChecked.length; index++) {
+      if (_isChecked[index]) {
+        _coursesTemp.add(_coursesListForUserType[index].uid);
+      }
+    }
+
+    setState(() {
+      _courses = _coursesTemp;
+    });
+  }
+
+  dynamicChips() {
+    return Wrap(
+      spacing: 6.0,
+      runSpacing: 6.0,
+      children: List<Widget>.generate(_courses.length, (int index) {
+        return Chip(
+          label: Text(_courses[index]),
+          backgroundColor:
+              Colors.primaries[_random.nextInt(Colors.primaries.length)]
+                  [_random.nextInt(9) * 100],
+        );
+      }),
+    );
+  }
+
   createCoursesAlertDialog(BuildContext context) {
     return showDialog(
       context: context,
@@ -90,7 +122,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 isChecked: _isChecked,
                 onChange: (val) {
                   _isChecked = val;
-                  print(_isChecked);
+                  getChipCourses();
                 },
               ),
             ),
@@ -342,6 +374,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             onChanged: (newValue) {
                               setState(() {
                                 dropdownValue = newValue!;
+                                _courses = [];
                               });
                               getCoursesForUseType();
                             },
@@ -359,7 +392,22 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 ),
                 Padding(
                   padding: const EdgeInsets.only(
-                    top: 30.0,
+                    top: 10.0,
+                    left: 50.0,
+                    right: 50.0,
+                  ),
+                  child: Column(
+                    children: [
+                      const Text("Selected Courses:"),
+                      Container(
+                        child: dynamicChips(),
+                      ),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(
+                    top: 10.0,
                     left: 50.0,
                     right: 50.0,
                   ),
@@ -442,20 +490,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
   postDetailsToFirestore() async {
     FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
     User? user = _auth.currentUser;
-    List<String> courses = [];
 
     UserModel userModel = UserModel();
-
-    for (var index = 0; index < _coursesListForUserType.length; index++) {
-      if (_isChecked[index]) {
-        courses.add(_coursesListForUserType[index].uid);
-      }
-    }
 
     userModel.email = user!.email;
     userModel.firstName = firstNameController.text;
     userModel.lastName = lastNameController.text;
-    userModel.assignedCourses = courses;
+    userModel.assignedCourses = _courses;
     if (dropdownValue == "Student") {
       userModel.accessLevel = "0";
     } else if (dropdownValue == "Teacher") {
@@ -463,7 +504,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     }
 
     if (dropdownValue == "Teacher") {
-      for (var uid in courses) {
+      for (var uid in _courses) {
         coursesRef.doc(uid).update({
           "AssignedProfessor": "${userModel.firstName} ${userModel.lastName}"
         });
@@ -508,8 +549,7 @@ class _MyDialogContentState extends State<MyDialogContent> {
       children: [
         Container(
           color: Colors.white,
-          height:
-              (MediaQuery.of(context).size.height / 10) * widget.courses.length,
+          height: MediaQuery.of(context).size.height / 2,
           width: 300,
           child: Column(
             children: [
