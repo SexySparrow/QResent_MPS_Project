@@ -20,9 +20,12 @@ class _TeacherCoursesState extends State<TeacherCourses> {
 
   final TextEditingController _searchController = TextEditingController();
   final TextEditingController _courseNameController = TextEditingController();
+  final TextEditingController _intervalController = TextEditingController();
+
   User? user = FirebaseAuth.instance.currentUser;
   List<CourseModel> _coursesList = [];
   List<CourseModel> _resultsList = [];
+  Map<CourseModel, List<String>> intervals = {};
 
   @override
   void initState() {
@@ -63,6 +66,9 @@ class _TeacherCoursesState extends State<TeacherCourses> {
     setState(() {
       _coursesList = courseListTemp;
     });
+    for (CourseModel course in courseListTemp) {
+      getIntervals(course);
+    }
     searchResultList();
   }
 
@@ -88,6 +94,105 @@ class _TeacherCoursesState extends State<TeacherCourses> {
 
   _onSearchChanged() {
     searchResultList();
+  }
+
+  getIntervals(CourseModel course) async {
+    List<String> tempIntervals = [];
+    await coursesRef
+        .doc(course.uid)
+        .get()
+        .then((value) => tempIntervals = List.from(value.get("Intervals")));
+    setState(() {
+      intervals[course] = tempIntervals;
+    });
+  }
+
+  void removeInterval(CourseModel course, String interval) async {
+    await coursesRef.doc(course.uid).update({
+      "Intervals": FieldValue.arrayRemove([interval])
+    });
+    getIntervals(course);
+  }
+
+  void addInterval(CourseModel course, String interval) async {
+    await coursesRef.doc(course.uid).update({
+      "Intervals": FieldValue.arrayUnion([interval])
+    });
+    getIntervals(course);
+  }
+
+  createAddAlertDialog(BuildContext context, CourseModel course) {
+    return showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text("Create New Interval"),
+          content:
+              const Text("Enter the name of the interval you want to create."),
+          actions: <Widget>[
+            Container(
+              padding: const EdgeInsets.only(
+                left: 20,
+                right: 20,
+              ),
+              child: TextField(
+                controller: _intervalController,
+                decoration: const InputDecoration(hintText: "Interval"),
+              ),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    _intervalController.text = "";
+                  },
+                  child: const Text("Cancel"),
+                ),
+                TextButton(
+                  onPressed: () {
+                    addInterval(course, _intervalController.text);
+                    Navigator.of(context).pop();
+                    _intervalController.text = "";
+                  },
+                  child: const Text("Submit"),
+                ),
+              ],
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  createDeleteAlertDialog(
+      BuildContext context, CourseModel course, String interval) {
+    return showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text("Delete Course"),
+          content:
+              Text("Are you sure you want to delete the interval ${interval}?"),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text("No"),
+            ),
+            TextButton(
+              onPressed: () {
+                removeInterval(course, interval);
+                Navigator.of(context).pop();
+              },
+              child: const Text("Yes"),
+            )
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -133,6 +238,45 @@ class _TeacherCoursesState extends State<TeacherCourses> {
                         return Card(
                           child: ListTile(
                             title: Text(_resultsList[index].uid),
+                            subtitle: ListView.builder(
+                                physics: ClampingScrollPhysics(),
+                                shrinkWrap: true,
+                                itemCount:
+                                    intervals[_resultsList[index]]!.length,
+                                itemBuilder: (context, intervalIndex) {
+                                  return Card(
+                                    child: ListTile(
+                                        title: Text(
+                                            intervals[_resultsList[index]]!
+                                                .elementAt(intervalIndex)),
+                                        trailing: IconButton(
+                                            onPressed: () {
+                                              createDeleteAlertDialog(
+                                                  context,
+                                                  _resultsList[index],
+                                                  intervals[
+                                                          _resultsList[index]]!
+                                                      .elementAt(
+                                                          intervalIndex));
+                                            },
+                                            icon: const Icon(
+                                              Icons.delete,
+                                              color: Colors.red,
+                                              size: 32,
+                                            ))),
+                                  );
+                                }),
+                            trailing: IconButton(
+                                onPressed: () {
+                                  createAddAlertDialog(
+                                      context, _resultsList[index]);
+                                },
+                                alignment: Alignment.center,
+                                icon: const Icon(
+                                  Icons.add,
+                                  color: Colors.grey,
+                                  size: 32,
+                                )),
                           ),
                         );
                       }),
