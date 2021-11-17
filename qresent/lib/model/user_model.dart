@@ -3,14 +3,17 @@ class UserModel {
   String? firstName;
   String? lastName;
   String? accessLevel;
+  String? uid;
   List<dynamic>? assignedCourses;
 
-  UserModel(
-      {this.email,
-      this.firstName,
-      this.lastName,
-      this.assignedCourses,
-      this.accessLevel});
+  UserModel({
+    this.email,
+    this.firstName,
+    this.lastName,
+    this.assignedCourses,
+    this.accessLevel,
+    this.uid,
+  });
 
   //Data fetched from firestore
   factory UserModel.fromMap(map) {
@@ -20,6 +23,7 @@ class UserModel {
       firstName: map["FirstName"],
       lastName: map["LastName"],
       assignedCourses: map["AssignedCourses"],
+      uid: map["UID"],
     );
   }
 
@@ -31,6 +35,7 @@ class UserModel {
       "FirstName": firstName,
       "LastName": lastName,
       "AssignedCourses": assignedCourses,
+      "UID": uid,
     };
   }
 }

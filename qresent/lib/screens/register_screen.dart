@@ -492,8 +492,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
     User? user = _auth.currentUser;
 
     UserModel userModel = UserModel();
-
-    userModel.email = user!.email;
+    userModel.uid = user!.uid;
+    userModel.email = user.email;
     userModel.firstName = firstNameController.text;
     userModel.lastName = lastNameController.text;
     userModel.assignedCourses = _courses;
@@ -522,13 +522,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
 }
 
 class MyDialogContent extends StatefulWidget {
-  const MyDialogContent(
-      {Key? key,
-      required this.courses,
-      required this.dropdownValue,
-      required this.isChecked,
-      this.onChange})
-      : super(key: key);
+  const MyDialogContent({
+    Key? key,
+    required this.courses,
+    required this.dropdownValue,
+    required this.isChecked,
+    this.onChange,
+  }) : super(key: key);
 
   final ValueChanged<List<bool>>? onChange;
   final List<CourseModel> courses;
