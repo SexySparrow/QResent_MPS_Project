@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:qresent/screens/login_screen.dart';
 import 'package:qresent/screens/teacher_courses.dart';
+import 'login_screen.dart';
+import 'generate_qr.dart';
 
 class TeacherDashboard extends StatefulWidget {
   const TeacherDashboard({Key? key}) : super(key: key);
@@ -24,45 +25,75 @@ class _TeacherDashboardState extends State<TeacherDashboard> {
     });
   }
 
+  Future<void> generateQR() async {
+    Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (context) => GenerateQRPage()));
+  }
+
+  Future<void> viewCourses() async {
+    Navigator.of(context)
+        .push(MaterialPageRoute(builder: (context) => const TeacherCourses()));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Teacher Home Page'),
-        actions: [
-          IconButton(
-            onPressed: () {
-              signOut();
-            },
-            icon: const Icon(Icons.logout),
-          )
-        ],
+        centerTitle: true,
+        title: const Text('Teacher Dashboard'),
       ),
       body: Center(
-        child: Container(
-          height: 80,
-          width: 150,
-          decoration: BoxDecoration(
-            color: Colors.blue,
-            borderRadius: BorderRadius.circular(10),
+          child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          Padding(
+            padding:
+                const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+            child: TextButton(
+                onPressed: () {
+                  generateQR();
+                },
+                child: const Text(
+                  'GENERATE NEW QR CODE',
+                  style: TextStyle(
+                    color: Colors.blue,
+                    fontSize: 25,
+                  ),
+                )),
           ),
-          child: MaterialButton(
-            onPressed: () {
-              Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => const TeacherCourses()));
-            },
-            child: const Text(
-              "Courses",
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 18,
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
+          Padding(
+            padding:
+                const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+            child: TextButton(
+                onPressed: () {
+                  viewCourses();
+                },
+                child: const Text(
+                  'COURSES',
+                  style: TextStyle(
+                    color: Colors.blue,
+                    fontSize: 25,
+                  ),
+                )),
           ),
-        ),
-      ),
+          Padding(
+            padding:
+                const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+            child: TextButton(
+                onPressed: () {
+                  signOut();
+                },
+                child: const Text(
+                  'SIGN OUT',
+                  style: TextStyle(
+                    color: Colors.blue,
+                    fontSize: 25,
+                  ),
+                )),
+          ),
+        ],
+      )),
     );
   }
 }
