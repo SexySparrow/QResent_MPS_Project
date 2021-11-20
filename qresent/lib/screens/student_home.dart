@@ -64,7 +64,7 @@ class _HomePage extends State<HomePage> {
             FlatButton(
               color: Colors.blue,
                 onPressed: (){},
-                child: const Text("Get attendence")
+                child: const Text("Get attendance")
             )
           ],
         ),
