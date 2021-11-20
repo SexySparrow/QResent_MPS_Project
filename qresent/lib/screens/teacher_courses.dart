@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:qresent/model/course_model.dart';
 import 'package:qresent/model/user_model.dart';
 
@@ -52,16 +51,14 @@ class _TeacherCoursesState extends State<TeacherCourses> {
         teacher = UserModel.fromMap(documentSnapshot.data());
       }
     });
-    if (teacher != null) {
-      await coursesRef
-          .where("UID", whereIn: teacher.assignedCourses)
-          .get()
-          .then((QuerySnapshot snapshot) {
-        for (var documentSnapshot in snapshot.docs) {
-          courseListTemp.add(CourseModel.fromMap(documentSnapshot.data()));
-        }
-      });
-    }
+    await coursesRef
+        .where("UID", whereIn: teacher.assignedCourses)
+        .get()
+        .then((QuerySnapshot snapshot) {
+      for (var documentSnapshot in snapshot.docs) {
+        courseListTemp.add(CourseModel.fromMap(documentSnapshot.data()));
+      }
+    });
 
     setState(() {
       _coursesList = courseListTemp;
@@ -114,14 +111,17 @@ class _TeacherCoursesState extends State<TeacherCourses> {
     getIntervals(course);
   }
 
-  void addInterval(CourseModel course, String interval) async {
+  void addInterval(CourseModel course, String day, String hour) async {
     await coursesRef.doc(course.uid).update({
-      "Intervals": FieldValue.arrayUnion([interval])
+      "Intervals": FieldValue.arrayUnion([day + " " + hour])
     });
     getIntervals(course);
   }
 
   createAddAlertDialog(BuildContext context, CourseModel course) {
+    String selectedValueDay = "Luni";
+    String selectedValueHour = "8:00-10:00";
+
     return showDialog(
       context: context,
       builder: (context) {
@@ -135,9 +135,27 @@ class _TeacherCoursesState extends State<TeacherCourses> {
                 left: 20,
                 right: 20,
               ),
-              child: TextField(
-                controller: _intervalController,
-                decoration: const InputDecoration(hintText: "Interval"),
+              child: Row(
+                children: <Widget>[
+                  Expanded(
+                      child: DropdownButtonFormField(
+                          value: selectedValueDay,
+                          onChanged: (String? newValue) {
+                            setState(() {
+                              selectedValueDay = newValue!;
+                            });
+                          },
+                          items: dropdownItemsDays)),
+                  Expanded(
+                      child: DropdownButtonFormField(
+                          value: selectedValueHour,
+                          onChanged: (String? newValue) {
+                            setState(() {
+                              selectedValueHour = newValue!;
+                            });
+                          },
+                          items: dropdownItemsHours)),
+                ],
               ),
             ),
             Row(
@@ -146,15 +164,13 @@ class _TeacherCoursesState extends State<TeacherCourses> {
                 TextButton(
                   onPressed: () {
                     Navigator.of(context).pop();
-                    _intervalController.text = "";
                   },
                   child: const Text("Cancel"),
                 ),
                 TextButton(
                   onPressed: () {
-                    addInterval(course, _intervalController.text);
+                    addInterval(course, selectedValueDay, selectedValueHour);
                     Navigator.of(context).pop();
-                    _intervalController.text = "";
                   },
                   child: const Text("Submit"),
                 ),
@@ -193,6 +209,30 @@ class _TeacherCoursesState extends State<TeacherCourses> {
         );
       },
     );
+  }
+
+  List<DropdownMenuItem<String>> get dropdownItemsDays {
+    List<DropdownMenuItem<String>> days = [
+      DropdownMenuItem(child: Text("Luni"), value: "Luni"),
+      DropdownMenuItem(child: Text("Marti"), value: "Marti"),
+      DropdownMenuItem(child: Text("Miercuri"), value: "Miercuri"),
+      DropdownMenuItem(child: Text("Joi"), value: "Joi"),
+      DropdownMenuItem(child: Text("Vineri"), value: "Vineri"),
+    ];
+    return days;
+  }
+
+  List<DropdownMenuItem<String>> get dropdownItemsHours {
+    List<DropdownMenuItem<String>> hours = [
+      DropdownMenuItem(child: Text("8:00-10:00"), value: "8:00-10:00"),
+      DropdownMenuItem(child: Text("10:00-12:00"), value: "10:00-12:00"),
+      DropdownMenuItem(child: Text("12:00-14:00"), value: "12:00-14:00"),
+      DropdownMenuItem(child: Text("14:00-16:00"), value: "14:00-16:00"),
+      DropdownMenuItem(child: Text("16:00-18:00"), value: "16:00-18:00"),
+      DropdownMenuItem(child: Text("18:00-20:00"), value: "18:00-20:00"),
+      DropdownMenuItem(child: Text("20:00-22:00"), value: "20:00-22:00"),
+    ];
+    return hours;
   }
 
   @override
