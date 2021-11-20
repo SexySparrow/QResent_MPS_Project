@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-//import 'package:flutter/services.dart';
+import 'package:intl/intl.dart';
 import 'package:qr_flutter/qr_flutter.dart';
-import 'package:qresent/screens/teacher_dashbord.dart';
-//import 'package:qrscan/qrscan.dart' as scanner;
-//import 'package:permission_handler/permission_handler.dart';
 
 class GenerateQRPage extends StatefulWidget {
-  const GenerateQRPage({Key? key}) : super(key: key);
+  const GenerateQRPage({Key? key, required this.interval, required this.course})
+      : super(key: key);
+  final String interval;
+  final String course;
 
   @override
   _GenerateQRPageState createState() => _GenerateQRPageState();
@@ -14,59 +14,38 @@ class GenerateQRPage extends StatefulWidget {
 
 class _GenerateQRPageState extends State<GenerateQRPage> {
   TextEditingController controller = TextEditingController();
-
+  String date = DateFormat('dd-MM-yyyy').format(DateTime.now());
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('QR GENERATOR'),
-        leading: GestureDetector(
-          onTap: () {
-            Navigator.of(context).pushReplacement(MaterialPageRoute(
-                builder: (context) => const TeacherDashboard()));
-          },
-          child: Icon(
-            Icons.arrow_back,
-          ),
+    return WillPopScope(
+      onWillPop: () async {
+        return true;
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('Scan QR code'),
         ),
-      ),
-      body: SingleChildScrollView(
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              QrImage(
-                data: controller.text,
-                size: 300,
-                embeddedImage: AssetImage('images/logo.png'),
-                embeddedImageStyle:
-                    QrEmbeddedImageStyle(size: const Size(80, 80)),
-              ),
-              Container(
-                margin: const EdgeInsets.all(20),
-                child: TextFormField(
-                  controller: controller,
-                  decoration: const InputDecoration(
-                      border: OutlineInputBorder(), labelText: 'Enter URL'),
-                  validator: (input) {
-                    if (input == null || input.isEmpty) {
-                      return 'Please enter a link';
-                    }
-                    if (!RegExp(
-                            "https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)")
-                        .hasMatch(input)) {
-                      return 'No valid link format';
-                    }
-                    return null;
-                  },
+        body: SingleChildScrollView(
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                QrImage(
+                  data: widget.course +
+                      " " +
+                      widget.interval +
+                      " " +
+                      date.toString(),
+                  size: 300,
+                  embeddedImageStyle:
+                      QrEmbeddedImageStyle(size: const Size(80, 80)),
                 ),
-              ),
-              ElevatedButton(
-                  onPressed: () {
-                    setState(() {});
-                  },
-                  child: const Text('GENERATE QR')),
-            ],
+                Container(
+                  margin: const EdgeInsets.all(20),
+                ),
+                const Text("Scan this QR code in order to be marked as present")
+              ],
+            ),
           ),
         ),
       ),

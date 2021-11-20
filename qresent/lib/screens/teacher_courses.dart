@@ -5,6 +5,8 @@ import 'package:qresent/model/attendance_model.dart';
 import 'package:qresent/model/course_model.dart';
 import 'package:qresent/model/user_model.dart';
 
+import 'generate_qr.dart';
+
 class TeacherCourses extends StatefulWidget {
   const TeacherCourses({Key? key}) : super(key: key);
 
@@ -39,6 +41,12 @@ class _TeacherCoursesState extends State<TeacherCourses> {
     _searchController.removeListener(_onSearchChanged);
     _searchController.dispose();
     super.dispose();
+  }
+
+  Future<void> generateQR(String course, String interval) async {
+    Navigator.of(context).push(MaterialPageRoute(
+        builder: (context) =>
+            GenerateQRPage(course: course, interval: interval)));
   }
 
   getCourses() async {
@@ -292,26 +300,47 @@ class _TeacherCoursesState extends State<TeacherCourses> {
                                     intervals[_resultsList[index]]!.length,
                                 itemBuilder: (context, intervalIndex) {
                                   return Card(
-                                    child: ListTile(
-                                        title: Text(
-                                            intervals[_resultsList[index]]!
-                                                .elementAt(intervalIndex)),
-                                        trailing: IconButton(
-                                            onPressed: () {
-                                              createDeleteAlertDialog(
-                                                  context,
-                                                  _resultsList[index],
-                                                  intervals[
-                                                          _resultsList[index]]!
-                                                      .elementAt(
-                                                          intervalIndex));
-                                            },
-                                            icon: const Icon(
-                                              Icons.delete,
-                                              color: Colors.red,
-                                              size: 32,
-                                            ))),
-                                  );
+                                      child: ListTile(
+                                          title: Text(
+                                              intervals[_resultsList[index]]!
+                                                  .elementAt(intervalIndex)),
+                                          trailing: Container(
+                                              width: 100,
+                                              child: Row(
+                                                children: <Widget>[
+                                                  IconButton(
+                                                      onPressed: () {
+                                                        createDeleteAlertDialog(
+                                                            context,
+                                                            _resultsList[index],
+                                                            intervals[
+                                                                    _resultsList[
+                                                                        index]]!
+                                                                .elementAt(
+                                                                    intervalIndex));
+                                                      },
+                                                      icon: const Icon(
+                                                        Icons.delete,
+                                                        color: Colors.red,
+                                                        size: 32,
+                                                      )),
+                                                  IconButton(
+                                                      onPressed: () {
+                                                        generateQR(
+                                                            _resultsList[index]
+                                                                .uid,
+                                                            intervals[
+                                                                    _resultsList[
+                                                                        index]]!
+                                                                .elementAt(
+                                                                    intervalIndex));
+                                                      },
+                                                      icon: const Icon(
+                                                        Icons.qr_code,
+                                                        size: 32,
+                                                      ))
+                                                ],
+                                              ))));
                                 }),
                             trailing: IconButton(
                                 onPressed: () {
