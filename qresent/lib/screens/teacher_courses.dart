@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:qresent/model/attendance_model.dart';
 import 'package:qresent/model/course_model.dart';
 import 'package:qresent/model/user_model.dart';
 
@@ -16,6 +17,8 @@ class _TeacherCoursesState extends State<TeacherCourses> {
       FirebaseFirestore.instance.collection("Courses");
   final CollectionReference teachersRef =
       FirebaseFirestore.instance.collection("Users");
+  final CollectionReference attendancesRef =
+      FirebaseFirestore.instance.collection("Attendance");
 
   final TextEditingController _searchController = TextEditingController();
 
@@ -106,6 +109,7 @@ class _TeacherCoursesState extends State<TeacherCourses> {
     await coursesRef.doc(course.uid).update({
       "Intervals": FieldValue.arrayRemove([interval])
     });
+    await attendancesRef.doc(course.uid + " " + interval).delete();
     getIntervals(course);
   }
 
@@ -113,6 +117,11 @@ class _TeacherCoursesState extends State<TeacherCourses> {
     await coursesRef.doc(course.uid).update({
       "Intervals": FieldValue.arrayUnion([day + " " + hour])
     });
+    AttendanceModel attendance =
+        AttendanceModel(dates: <String, Map<String, int>>{}, total: 0);
+    await attendancesRef
+        .doc(course.uid + " " + day + " " + hour)
+        .set(attendance.toMap());
     getIntervals(course);
   }
 
