@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'student_settings.dart';
 import 'student_profile.dart';
-import 'qr_scan.dart';
-
+import 'student_home.dart';
 
 class StudentDashboard extends StatefulWidget {
   const StudentDashboard({Key? key}) : super(key: key);
@@ -21,12 +20,8 @@ class _StudentDashboardState extends State<StudentDashboard> {
   }
 
   final List<Widget> _widgetOptions = <Widget>[
-    // TO DO SCAN QR CODE HERE
-    QRScanPage(),
-    // SETTINGS
+    const HomePage(),
     const Settings(),
-
-    // PROFILE
     const Profile(),
   ];
 
@@ -37,8 +32,6 @@ class _StudentDashboardState extends State<StudentDashboard> {
         child: _widgetOptions.elementAt(_selectedIndex),
       ),
       bottomNavigationBar: BottomNavigationBar(
-        // Incearca sa pastrezi culoarea
-        // type: BottomNavigationBarType.shifting,
         mouseCursor: SystemMouseCursors.grab,
         backgroundColor: Colors.blueAccent,
         elevation: 0,
