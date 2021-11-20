@@ -304,7 +304,7 @@ class _TeacherCoursesState extends State<TeacherCourses> {
                                           title: Text(
                                               intervals[_resultsList[index]]!
                                                   .elementAt(intervalIndex)),
-                                          trailing: Container(
+                                          trailing: SizedBox(
                                               width: 100,
                                               child: Row(
                                                 children: <Widget>[
