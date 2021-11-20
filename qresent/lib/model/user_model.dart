@@ -14,7 +14,6 @@ class UserModel {
     this.accessLevel,
     this.uid,
   });
-
   //Data fetched from firestore
   factory UserModel.fromMap(map) {
     return UserModel(
