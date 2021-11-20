@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'student_settings.dart';
 import 'student_profile.dart';
+import 'qr_scan.dart';
 
 
 class StudentDashboard extends StatefulWidget {
@@ -21,21 +22,17 @@ class _StudentDashboardState extends State<StudentDashboard> {
 
   final List<Widget> _widgetOptions = <Widget>[
     // TO DO SCAN QR CODE HERE
-      const Text("Here should be the QR scan"),
-
+    QRScanPage(),
     // SETTINGS
-      Settings(),
+    const Settings(),
 
     // PROFILE
-      Profile(),
+    const Profile(),
   ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      /*appBar: AppBar(
-        title: const Text('Home Page'),
-      ),*/
       body: Center(
         child: _widgetOptions.elementAt(_selectedIndex),
       ),
