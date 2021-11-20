@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 //import 'package:flutter/services.dart';
 import 'package:qr_flutter/qr_flutter.dart';
+import 'package:qresent/screens/teacher_dashbord.dart';
 //import 'package:qrscan/qrscan.dart' as scanner;
 //import 'package:permission_handler/permission_handler.dart';
 
@@ -13,11 +14,21 @@ class GenerateQRPage extends StatefulWidget {
 
 class _GenerateQRPageState extends State<GenerateQRPage> {
   TextEditingController controller = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('QR GENERATOR'),
+        leading: GestureDetector(
+          onTap: () {
+            Navigator.of(context).pushReplacement(MaterialPageRoute(
+                builder: (context) => const TeacherDashboard()));
+          },
+          child: Icon(
+            Icons.arrow_back,
+          ),
+        ),
       ),
       body: SingleChildScrollView(
         child: Center(
@@ -33,10 +44,21 @@ class _GenerateQRPageState extends State<GenerateQRPage> {
               ),
               Container(
                 margin: const EdgeInsets.all(20),
-                child: TextField(
+                child: TextFormField(
                   controller: controller,
                   decoration: const InputDecoration(
                       border: OutlineInputBorder(), labelText: 'Enter URL'),
+                  validator: (input) {
+                    if (input == null || input.isEmpty) {
+                      return 'Please enter a link';
+                    }
+                    if (!RegExp(
+                            "https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)")
+                        .hasMatch(input)) {
+                      return 'No valid link format';
+                    }
+                    return null;
+                  },
                 ),
               ),
               ElevatedButton(

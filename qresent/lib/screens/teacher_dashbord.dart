@@ -4,6 +4,8 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'login_screen.dart';
 import 'generate_qr.dart';
 
+//TREBUIE INLOCUIT CU TEACHER DASHBOARDUL DEJA REALIZAT LA MERGE
+
 class TeacherDashboard extends StatefulWidget {
   const TeacherDashboard({Key? key}) : super(key: key);
 
