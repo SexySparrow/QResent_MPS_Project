@@ -3,8 +3,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:qresent/model/user_model.dart';
 import 'package:flutter/material.dart';
-import 'package:qresent/screens/teacher_dashboard.dart';
 import 'student_dashboard.dart';
+import 'admin_dashboard.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -194,8 +194,8 @@ class _LoginScreenState extends State<LoginScreen> {
                       builder: (context) => const TeacherDashboard()));
               Fluttertoast.showToast(msg: "Login Successful");
             } else if (currentUser.accessLevel == '2') {
-              // Navigator.of(context).pushReplacement(MaterialPageRoute(
-              //     builder: (context) => const AdminDashboard()));
+              Navigator.of(context).pushReplacement(MaterialPageRoute(
+                  builder: (context) => const AdminDashboard()));
               Fluttertoast.showToast(msg: "Login Successful");
             }
           });
