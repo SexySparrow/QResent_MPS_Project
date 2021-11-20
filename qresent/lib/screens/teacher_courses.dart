@@ -18,8 +18,6 @@ class _TeacherCoursesState extends State<TeacherCourses> {
       FirebaseFirestore.instance.collection("Users");
 
   final TextEditingController _searchController = TextEditingController();
-  final TextEditingController _courseNameController = TextEditingController();
-  final TextEditingController _intervalController = TextEditingController();
 
   User? user = FirebaseAuth.instance.currentUser;
   List<CourseModel> _coursesList = [];
@@ -190,7 +188,7 @@ class _TeacherCoursesState extends State<TeacherCourses> {
         return AlertDialog(
           title: const Text("Delete Course"),
           content:
-              Text("Are you sure you want to delete the interval ${interval}?"),
+              Text("Are you sure you want to delete the interval $interval?"),
           actions: <Widget>[
             TextButton(
               onPressed: () {
@@ -213,24 +211,24 @@ class _TeacherCoursesState extends State<TeacherCourses> {
 
   List<DropdownMenuItem<String>> get dropdownItemsDays {
     List<DropdownMenuItem<String>> days = [
-      DropdownMenuItem(child: Text("Luni"), value: "Luni"),
-      DropdownMenuItem(child: Text("Marti"), value: "Marti"),
-      DropdownMenuItem(child: Text("Miercuri"), value: "Miercuri"),
-      DropdownMenuItem(child: Text("Joi"), value: "Joi"),
-      DropdownMenuItem(child: Text("Vineri"), value: "Vineri"),
+      const DropdownMenuItem(child: Text("Luni"), value: "Luni"),
+      const DropdownMenuItem(child: Text("Marti"), value: "Marti"),
+      const DropdownMenuItem(child: Text("Miercuri"), value: "Miercuri"),
+      const DropdownMenuItem(child: Text("Joi"), value: "Joi"),
+      const DropdownMenuItem(child: Text("Vineri"), value: "Vineri"),
     ];
     return days;
   }
 
   List<DropdownMenuItem<String>> get dropdownItemsHours {
     List<DropdownMenuItem<String>> hours = [
-      DropdownMenuItem(child: Text("8:00-10:00"), value: "8:00-10:00"),
-      DropdownMenuItem(child: Text("10:00-12:00"), value: "10:00-12:00"),
-      DropdownMenuItem(child: Text("12:00-14:00"), value: "12:00-14:00"),
-      DropdownMenuItem(child: Text("14:00-16:00"), value: "14:00-16:00"),
-      DropdownMenuItem(child: Text("16:00-18:00"), value: "16:00-18:00"),
-      DropdownMenuItem(child: Text("18:00-20:00"), value: "18:00-20:00"),
-      DropdownMenuItem(child: Text("20:00-22:00"), value: "20:00-22:00"),
+      const DropdownMenuItem(child: Text("8:00-10:00"), value: "8:00-10:00"),
+      const DropdownMenuItem(child: Text("10:00-12:00"), value: "10:00-12:00"),
+      const DropdownMenuItem(child: Text("12:00-14:00"), value: "12:00-14:00"),
+      const DropdownMenuItem(child: Text("14:00-16:00"), value: "14:00-16:00"),
+      const DropdownMenuItem(child: Text("16:00-18:00"), value: "16:00-18:00"),
+      const DropdownMenuItem(child: Text("18:00-20:00"), value: "18:00-20:00"),
+      const DropdownMenuItem(child: Text("20:00-22:00"), value: "20:00-22:00"),
     ];
     return hours;
   }
@@ -279,7 +277,7 @@ class _TeacherCoursesState extends State<TeacherCourses> {
                           child: ListTile(
                             title: Text(_resultsList[index].uid),
                             subtitle: ListView.builder(
-                                physics: ClampingScrollPhysics(),
+                                physics: const ClampingScrollPhysics(),
                                 shrinkWrap: true,
                                 itemCount:
                                     intervals[_resultsList[index]]!.length,
