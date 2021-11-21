@@ -3,7 +3,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:qresent/model/user_model.dart';
 import 'package:flutter/material.dart';
+import 'package:qresent/screens/teacher_dashboard.dart';
 import 'student_dashboard.dart';
+import 'admin_dashboard.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -43,7 +45,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(30),
                   child: Image.asset(
-                    'assets/images/img_login.png',
+                    "assets/images/img_login.png",
                     height: 200,
                     width: 200,
                   ),
@@ -61,32 +63,33 @@ class _LoginScreenState extends State<LoginScreen> {
                       left: 50.0,
                       right: 50.0,
                     ),
-                    child: TextFormField(
-                      controller: emailController,
-                      keyboardType: TextInputType.emailAddress,
-                      decoration: InputDecoration(
-                        prefixIcon: const Icon(Icons.email),
-                        contentPadding:
-                            const EdgeInsets.fromLTRB(20, 15, 20, 15),
-                        hintText: "Email",
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
+                    child: SizedBox(
+                      width: 300,
+                      child: TextFormField(
+                        controller: emailController,
+                        keyboardType: TextInputType.emailAddress,
+                        decoration: InputDecoration(
+                          prefixIcon: const Icon(Icons.email),
+                          contentPadding:
+                              const EdgeInsets.fromLTRB(20, 15, 20, 15),
+                          hintText: "Email",
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
                         ),
+                        validator: (input) {
+                          if (input!.isEmpty) {
+                            return "Please enter an email";
+                          }
+
+                          if (!RegExp("^[a-zA-Z0-9++.-]+@[a-zA-Z0-9.-]+.[a-z].")
+                              .hasMatch(input)) {
+                            return "Please enter a valid email";
+                          }
+                        },
+                        textInputAction: TextInputAction.next,
+                        onSaved: (input) => emailController.text = input!,
                       ),
-                      validator: (input) {
-                        if (input!.isEmpty) {
-                          return 'Please enter an email';
-                        }
-
-                        if (!RegExp("^[a-zA-Z0-9++.-]+@[a-zA-Z0-9.-]+.[a-z].")
-                            .hasMatch(input)) {
-                          return 'Please enter a valid email';
-                        }
-
-                        return null;
-                      },
-                      textInputAction: TextInputAction.next,
-                      onSaved: (input) => emailController.text = input!,
                     ),
                   ),
                   Padding(
@@ -95,40 +98,31 @@ class _LoginScreenState extends State<LoginScreen> {
                       left: 50.0,
                       right: 50.0,
                     ),
-                    child: TextFormField(
-                      controller: passwordController,
-                      textInputAction: TextInputAction.done,
-                      decoration: InputDecoration(
-                        prefixIcon: const Icon(Icons.vpn_key),
-                        contentPadding:
-                            const EdgeInsets.fromLTRB(20, 15, 20, 15),
-                        hintText: "Password",
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
+                    child: SizedBox(
+                      width: 300,
+                      child: TextFormField(
+                        controller: passwordController,
+                        textInputAction: TextInputAction.done,
+                        decoration: InputDecoration(
+                          prefixIcon: const Icon(Icons.vpn_key),
+                          contentPadding:
+                              const EdgeInsets.fromLTRB(20, 15, 20, 15),
+                          hintText: "Password",
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
                         ),
+                        validator: (input) {
+                          if (input!.isEmpty) {
+                            return "Please Enter Your Password";
+                          }
+                        },
+                        onSaved: (input) => passwordController.text = input!,
+                        obscureText: true,
                       ),
-                      validator: (input) {
-                        if (input!.isEmpty) {
-                          return 'Please Enter Your Password';
-                        }
-                      },
-                      onSaved: (input) => passwordController.text = input!,
-                      obscureText: true,
                     ),
                   ),
                 ],
-              ),
-            ),
-            TextButton(
-              onPressed: () {
-                //TODO FORGOT PASSWORD SCREEN GOES HERE
-              },
-              child: const Text(
-                'Forgot Password',
-                style: TextStyle(
-                  color: Colors.blue,
-                  fontSize: 15,
-                ),
               ),
             ),
             Material(
@@ -149,6 +143,18 @@ class _LoginScreenState extends State<LoginScreen> {
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
                   ),
+                ),
+              ),
+            ),
+            TextButton(
+              onPressed: () {
+                //TODO FORGOT PASSWORD SCREEN GOES HERE
+              },
+              child: const Text(
+                "Forgot Password",
+                style: TextStyle(
+                  color: Colors.blue,
+                  fontSize: 15,
                 ),
               ),
             ),
@@ -186,13 +192,11 @@ class _LoginScreenState extends State<LoginScreen> {
               Navigator.of(context).pushReplacement(
                   // To change StudentDashboard with TeacherDashboard when this one will be created
                   MaterialPageRoute(
-                      builder: (context) => const StudentDashboard()));
+                      builder: (context) => const TeacherDashboard()));
               Fluttertoast.showToast(msg: "Login Successful");
             } else if (currentUser.accessLevel == '2') {
-              Navigator.of(context).pushReplacement(
-                  // To change StudentDashboard with AdminDashboard when this one will be created
-                  MaterialPageRoute(
-                      builder: (context) => const StudentDashboard()));
+              Navigator.of(context).pushReplacement(MaterialPageRoute(
+                  builder: (context) => const AdminDashboard()));
               Fluttertoast.showToast(msg: "Login Successful");
             }
           });
