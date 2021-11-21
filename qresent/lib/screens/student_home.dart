@@ -10,12 +10,13 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePage extends State<HomePage> {
-  final CollectionReference coursesRef = FirebaseFirestore.instance.collection("Users");
+  final CollectionReference coursesRef =
+      FirebaseFirestore.instance.collection("Users");
   final FirebaseAuth auth = FirebaseAuth.instance;
   List<dynamic> _courses = [];
-  List<String> courses =[];
+  List<String> courses = [];
   var stringWord;
-  
+
   @override
   void initState() {
     getCourses();
@@ -26,61 +27,60 @@ class _HomePage extends State<HomePage> {
     final User? user = auth.currentUser;
     final uid = user?.uid;
 
-    DocumentSnapshot userData = await FirebaseFirestore.instance.collection("Users").doc(uid).get();
+    DocumentSnapshot userData =
+        await FirebaseFirestore.instance.collection("Users").doc(uid).get();
 
     setState(() {
       _courses = userData["AssignedCourses"];
       courses = _courses.cast<String>();
       stringWord = courses.join("\n");
     });
-
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title: const Text("Home"),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            FlatButton(
-              color: Colors.blue,
+        appBar: AppBar(
+          centerTitle: true,
+          title: const Text("Home"),
+        ),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              FlatButton(
+                color: Colors.blue,
                 child: const Text("Courses"),
-              onPressed: (){
+                onPressed: () {
                   print("S-a apasat");
                   _showCourses();
-                  courses.forEach((element) {print(element);});
-              },
-            ),
-            FlatButton(
-                color: Colors.blue,
-                onPressed: (){},
-                child: const Text("Scan QR")
-            ),
-            FlatButton(
-              color: Colors.blue,
-                onPressed: (){},
-                child: const Text("Get attendance")
-            )
-          ],
-        ),
-      )
-    );
+                  courses.forEach((element) {
+                    print(element);
+                  });
+                },
+              ),
+              FlatButton(
+                  color: Colors.blue,
+                  onPressed: () {},
+                  child: const Text("Scan QR")),
+              FlatButton(
+                  color: Colors.blue,
+                  onPressed: () {},
+                  child: const Text("Get attendance"))
+            ],
+          ),
+        ));
   }
 
   _showCourses() async {
     await showDialog(
         context: context,
-        builder: (context) =>
-            AlertDialog(
+        builder: (context) => AlertDialog(
               backgroundColor: Colors.lightBlue,
               title: const Text("Courses" + "\n"),
               actions: <Widget>[
-                Text(stringWord,
+                Text(
+                  stringWord,
                   textAlign: TextAlign.left,
                 )
               ],

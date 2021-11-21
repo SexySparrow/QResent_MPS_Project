@@ -17,10 +17,9 @@ class Profile extends StatefulWidget {
 class _Profile extends State<Profile> {
   final FirebaseAuth auth = FirebaseAuth.instance;
 
-
   @override
   void initState() {
-    getUsers() ;
+    getUsers();
     super.initState();
   }
 
@@ -28,7 +27,8 @@ class _Profile extends State<Profile> {
     final User? user = auth.currentUser;
     final uid = user?.uid;
 
-    DocumentSnapshot userData = await FirebaseFirestore.instance.collection("Users").doc(uid).get();
+    DocumentSnapshot userData =
+        await FirebaseFirestore.instance.collection("Users").doc(uid).get();
 
     setState(() {
       emailUser = userData["Email"];
@@ -41,13 +41,11 @@ class _Profile extends State<Profile> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-          centerTitle: true,
-          title: const Text('Profile')
-      ),
+      appBar: AppBar(centerTitle: true, title: const Text('Profile')),
       body: _body(context),
     );
   }
+
   _body(BuildContext context) =>
       ListView(physics: BouncingScrollPhysics(), children: <Widget>[
         Container(
@@ -55,14 +53,15 @@ class _Profile extends State<Profile> {
             child: Column(children: <Widget>[_headerSignUp(), _formUI()]))
       ]);
   _headerSignUp() => Column(children: <Widget>[
-    Container(height: 80, child: Icon(Icons.supervised_user_circle, size: 90)),
-    const SizedBox(height: 12.0),
-    Text(firstNameUser + " " + lastNameUser,
-        style: const TextStyle(
-            fontWeight: FontWeight.w700,
-            fontSize: 20.0,
-            color: Colors.blue)),
-  ]);
+        Container(
+            height: 80, child: Icon(Icons.supervised_user_circle, size: 90)),
+        const SizedBox(height: 12.0),
+        Text(firstNameUser + " " + lastNameUser,
+            style: const TextStyle(
+                fontWeight: FontWeight.w700,
+                fontSize: 20.0,
+                color: Colors.blue)),
+      ]);
   _formUI() {
     return new Container(
       child: Column(
@@ -76,6 +75,7 @@ class _Profile extends State<Profile> {
       ),
     );
   }
+
   _email() {
     return Row(children: <Widget>[
       _prefixIcon(Icons.email),
@@ -93,6 +93,7 @@ class _Profile extends State<Profile> {
       )
     ]);
   }
+
   _UID() {
     return Row(children: <Widget>[
       _prefixIcon(Icons.adb_sharp),
@@ -131,6 +132,7 @@ class _Profile extends State<Profile> {
           )),
     );
   }
+
   @override
   void dispose() {
     super.dispose();

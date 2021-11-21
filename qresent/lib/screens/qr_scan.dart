@@ -14,39 +14,37 @@ class _QRScanPageState extends State<QRScanPage> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    body: Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          const Text(
-            'Scan Result',
-            style: TextStyle(
-              fontSize: 16,
-              color: Colors.white54,
-              fontWeight: FontWeight.bold,
-            ),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              const Text(
+                'Scan Result',
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.white54,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                '$qrCode',
+                style: const TextStyle(
+                  fontSize: 28,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+              ),
+              const SizedBox(height: 72),
+              // ignore: deprecated_member_use
+              RaisedButton(
+                child: const Text("Scan QR"),
+                onPressed: () => {scanQRCode()},
+              )
+            ],
           ),
-          const SizedBox(height: 8),
-          Text(
-            '$qrCode',
-            style: const TextStyle(
-              fontSize: 28,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-            ),
-          ),
-          const SizedBox(height: 72),
-          // ignore: deprecated_member_use
-          RaisedButton(
-            child: const Text("Scan QR"),
-            onPressed: () => {
-              scanQRCode()
-            },
-          )
-        ],
-      ),
-    ),
-  );
+        ),
+      );
 
   Future<void> scanQRCode() async {
     try {
@@ -67,5 +65,3 @@ class _QRScanPageState extends State<QRScanPage> {
     }
   }
 }
-
-

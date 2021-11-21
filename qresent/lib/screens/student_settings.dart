@@ -27,14 +27,11 @@ class _settings extends State<Settings> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-          centerTitle: true,
-          title: const Text('Settings')
-      ),
-      floatingActionButtonLocation:  FloatingActionButtonLocation.centerFloat,
+      appBar: AppBar(centerTitle: true, title: const Text('Settings')),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: SizedBox(
-        height:80,
-        width:100,
+        height: 80,
+        width: 100,
         child: FloatingActionButton(
           onPressed: () {
             signOut();
