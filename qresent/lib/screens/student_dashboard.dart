@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'login_screen.dart';
+import 'student_settings.dart';
+import 'student_profile.dart';
+import 'student_home.dart';
 
 class StudentDashboard extends StatefulWidget {
   const StudentDashboard({Key? key}) : super(key: key);
@@ -11,45 +11,51 @@ class StudentDashboard extends StatefulWidget {
 }
 
 class _StudentDashboardState extends State<StudentDashboard> {
-  final _auth = FirebaseAuth.instance;
+  int _selectedIndex = 0;
 
-  Future<void> signOut() async {
-    await _auth.signOut().then((result) {
-      Fluttertoast.showToast(msg: "Signed Out");
-      Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => const LoginScreen()));
-    }).catchError((e) {
-      Fluttertoast.showToast(msg: e!.message);
+  void _onItemTap(int index) {
+    setState(() {
+      _selectedIndex = index;
     });
   }
+
+  final List<Widget> _widgetOptions = <Widget>[
+    const HomePage(),
+    const Settings(),
+    const Profile(),
+  ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Home Page'),
-      ),
       body: Center(
-        child: Container(
-          height: 80,
-          width: 150,
-          decoration: BoxDecoration(
-            color: Colors.blue,
-            borderRadius: BorderRadius.circular(10),
+        child: _widgetOptions.elementAt(_selectedIndex),
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        mouseCursor: SystemMouseCursors.grab,
+        backgroundColor: Colors.blueAccent,
+        elevation: 0,
+        selectedFontSize: 20,
+        selectedIconTheme:
+            const IconThemeData(color: Colors.amberAccent, size: 40),
+        selectedItemColor: Colors.amberAccent,
+        selectedLabelStyle: const TextStyle(fontWeight: FontWeight.bold),
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'HOME',
           ),
-          child: TextButton(
-            onPressed: () {
-              signOut();
-            },
-            child: const Text(
-              'SignOut',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 25,
-              ),
-            ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.settings),
+            label: 'SETTINGS',
           ),
-        ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.account_circle),
+            label: 'PROFILE',
+          ),
+        ],
+        currentIndex: _selectedIndex,
+        onTap: _onItemTap,
       ),
     );
   }
