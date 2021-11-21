@@ -6,7 +6,6 @@ String emailUser = '-';
 String firstNameUser = '-';
 String lastNameUser = '-';
 String uidUser = '-';
-String groupUser = '-';
 
 class Profile extends StatefulWidget {
   const Profile({Key? key}) : super(key: key);
@@ -17,11 +16,11 @@ class Profile extends StatefulWidget {
 
 class _Profile extends State<Profile> {
   final FirebaseAuth auth = FirebaseAuth.instance;
-  TextEditingController groupController = TextEditingController();
+
 
   @override
   void initState() {
-    getUsers();
+    getUsers() ;
     super.initState();
   }
 
@@ -29,74 +28,54 @@ class _Profile extends State<Profile> {
     final User? user = auth.currentUser;
     final uid = user?.uid;
 
-    DocumentSnapshot userData =
-        await FirebaseFirestore.instance.collection("Users").doc(uid).get();
+    DocumentSnapshot userData = await FirebaseFirestore.instance.collection("Users").doc(uid).get();
 
     setState(() {
       emailUser = userData["Email"];
       firstNameUser = userData["FirstName"];
       lastNameUser = userData["LastName"];
       uidUser = userData["UID"];
-      groupUser = userData["Group"];
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(centerTitle: true, title: const Text('Profile')),
-      bottomNavigationBar: Container(
-        padding: const EdgeInsets.all(5),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: <Widget>[
-            FloatingActionButton(
-                elevation: 0.0,
-                mini: true,
-                child: const Icon(Icons.edit, color: Colors.white),
-                backgroundColor: Colors.blueAccent,
-                onPressed: () {
-                  _showChangeDialog();
-                })
-          ],
-        ),
+      appBar: AppBar(
+          centerTitle: true,
+          title: const Text('Profile')
       ),
       body: _body(context),
     );
   }
-
   _body(BuildContext context) =>
-      ListView(physics: const BouncingScrollPhysics(), children: <Widget>[
+      ListView(physics: BouncingScrollPhysics(), children: <Widget>[
         Container(
-            padding: const EdgeInsets.all(15),
+            padding: EdgeInsets.all(15),
             child: Column(children: <Widget>[_headerSignUp(), _formUI()]))
       ]);
   _headerSignUp() => Column(children: <Widget>[
-        const SizedBox(
-            height: 80, child: Icon(Icons.supervised_user_circle, size: 90)),
-        const SizedBox(height: 12.0),
-        Text(firstNameUser + " " + lastNameUser,
-            style: const TextStyle(
-                fontWeight: FontWeight.w700,
-                fontSize: 20.0,
-                color: Colors.blue)),
-      ]);
+    Container(height: 80, child: Icon(Icons.supervised_user_circle, size: 90)),
+    const SizedBox(height: 12.0),
+    Text(firstNameUser + " " + lastNameUser,
+        style: const TextStyle(
+            fontWeight: FontWeight.w700,
+            fontSize: 20.0,
+            color: Colors.blue)),
+  ]);
   _formUI() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        const SizedBox(height: 40.0),
-        _email(),
-        const SizedBox(height: 12.0),
-        _emailCurs(),
-        const SizedBox(height: 12.0),
-        _group(),
-        const SizedBox(height: 12.0),
-        _uid(),
-      ],
+    return new Container(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          SizedBox(height: 40.0),
+          _email(),
+          SizedBox(height: 12.0),
+          _UID(),
+        ],
+      ),
     );
   }
-
   _email() {
     return Row(children: <Widget>[
       _prefixIcon(Icons.email),
@@ -114,47 +93,7 @@ class _Profile extends State<Profile> {
       )
     ]);
   }
-
-  _emailCurs() {
-    return Row(children: <Widget>[
-      _prefixIcon(Icons.email_outlined),
-      Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          const Text('Institution email',
-              style: TextStyle(
-                  fontWeight: FontWeight.w700,
-                  fontSize: 15.0,
-                  color: Colors.grey)),
-          const SizedBox(height: 1),
-          Text(firstNameUser.toLowerCase() +
-              "." +
-              lastNameUser.toLowerCase() +
-              "@cs.com")
-        ],
-      )
-    ]);
-  }
-
-  _group() {
-    return Row(children: <Widget>[
-      _prefixIcon(Icons.group),
-      Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          const Text('Group',
-              style: TextStyle(
-                  fontWeight: FontWeight.w700,
-                  fontSize: 15.0,
-                  color: Colors.grey)),
-          const SizedBox(height: 1),
-          Text(groupUser)
-        ],
-      )
-    ]);
-  }
-
-  _uid() {
+  _UID() {
     return Row(children: <Widget>[
       _prefixIcon(Icons.adb_sharp),
       Column(
@@ -192,46 +131,8 @@ class _Profile extends State<Profile> {
           )),
     );
   }
-
   @override
   void dispose() {
     super.dispose();
-  }
-
-  _showChangeDialog() async {
-    await showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-                backgroundColor: Colors.blueGrey,
-                title: const Text("Change group"),
-                content: TextField(
-                  controller: groupController,
-                ),
-                actions: <Widget>[
-                  TextButton(
-                      onPressed: () {
-                        setState(() {
-                          groupUser = groupController.text;
-                        });
-                        updateGroup();
-                        Navigator.pop(context);
-                      },
-                      child: const Text(
-                        "Save",
-                        style: TextStyle(
-                            color: Colors.blueAccent,
-                            fontWeight: FontWeight.bold),
-                      ))
-                ]));
-  }
-
-  updateGroup() async {
-    final User? user = auth.currentUser;
-    final uid = user?.uid;
-
-    FirebaseFirestore.instance
-        .collection("Users")
-        .doc(uid)
-        .update({"Group": groupUser});
   }
 }
