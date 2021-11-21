@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:qresent/model/attendance_model.dart';
 import 'package:qresent/model/course_model.dart';
 import 'package:qresent/model/user_model.dart';
@@ -43,10 +44,21 @@ class _TeacherCoursesState extends State<TeacherCourses> {
     super.dispose();
   }
 
-  Future<void> generateQR(String course, String interval) async {
+  Future<void> generateQR(String course, String interval, String type) async {
+    if (type == "present") {
+      String date = DateFormat('dd-MM-yyyy').format(DateTime.now());
+      await attendancesRef.doc(course + " " + interval).get().then((value) {
+        AttendanceModel attendance = AttendanceModel.fromMap(value.data());
+        attendance.dates.putIfAbsent(date, () => []);
+        attendancesRef.doc(course + " " + interval).set(attendance.toMap());
+      });
+    }
     Navigator.of(context).push(MaterialPageRoute(
-        builder: (context) =>
-            GenerateQRPage(course: course, interval: interval)));
+        builder: (context) => GenerateQRPage(
+              course: course,
+              interval: interval,
+              type: type,
+            )));
   }
 
   getCourses() async {
@@ -126,7 +138,7 @@ class _TeacherCoursesState extends State<TeacherCourses> {
       "Intervals": FieldValue.arrayUnion([day + " " + hour])
     });
     AttendanceModel attendance =
-        AttendanceModel(dates: <String, Map<String, int>>{}, total: 0);
+        AttendanceModel(dates: <String, List<List<String>>>{}, total: 0);
     await attendancesRef
         .doc(course.uid + " " + day + " " + hour)
         .set(attendance.toMap());
@@ -305,7 +317,7 @@ class _TeacherCoursesState extends State<TeacherCourses> {
                                               intervals[_resultsList[index]]!
                                                   .elementAt(intervalIndex)),
                                           trailing: SizedBox(
-                                              width: 100,
+                                              width: 120,
                                               child: Row(
                                                 children: <Widget>[
                                                   IconButton(
@@ -325,6 +337,7 @@ class _TeacherCoursesState extends State<TeacherCourses> {
                                                         size: 32,
                                                       )),
                                                   IconButton(
+                                                      tooltip: "Attendance",
                                                       onPressed: () {
                                                         generateQR(
                                                             _resultsList[index]
@@ -333,10 +346,28 @@ class _TeacherCoursesState extends State<TeacherCourses> {
                                                                     _resultsList[
                                                                         index]]!
                                                                 .elementAt(
-                                                                    intervalIndex));
+                                                                    intervalIndex),
+                                                            "present");
                                                       },
                                                       icon: const Icon(
-                                                        Icons.qr_code,
+                                                        Icons.qr_code_2,
+                                                        size: 32,
+                                                      )),
+                                                  IconButton(
+                                                      tooltip: "Activity",
+                                                      onPressed: () {
+                                                        generateQR(
+                                                            _resultsList[index]
+                                                                .uid,
+                                                            intervals[
+                                                                    _resultsList[
+                                                                        index]]!
+                                                                .elementAt(
+                                                                    intervalIndex),
+                                                            "active");
+                                                      },
+                                                      icon: const Icon(
+                                                        Icons.qr_code_2,
                                                         size: 32,
                                                       ))
                                                 ],
