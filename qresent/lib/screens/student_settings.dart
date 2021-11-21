@@ -1,17 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-
 import 'login_screen.dart';
 
 class Settings extends StatefulWidget {
   const Settings({Key? key}) : super(key: key);
 
   @override
-  _settings createState() => _settings();
+  _Settings createState() => _Settings();
 }
 
-class _settings extends State<Settings> {
+class _Settings extends State<Settings> {
   final _auth = FirebaseAuth.instance;
 
   Future<void> signOut() async {
@@ -27,14 +26,11 @@ class _settings extends State<Settings> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-          centerTitle: true,
-          title: const Text('Settings')
-      ),
-      floatingActionButtonLocation:  FloatingActionButtonLocation.centerFloat,
+      appBar: AppBar(centerTitle: true, title: const Text('Settings')),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: SizedBox(
-        height:80,
-        width:100,
+        height: 80,
+        width: 100,
         child: FloatingActionButton(
           onPressed: () {
             signOut();

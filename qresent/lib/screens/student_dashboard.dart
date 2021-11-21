@@ -36,7 +36,8 @@ class _StudentDashboardState extends State<StudentDashboard> {
         backgroundColor: Colors.blueAccent,
         elevation: 0,
         selectedFontSize: 20,
-        selectedIconTheme: const IconThemeData(color: Colors.amberAccent, size: 40),
+        selectedIconTheme:
+            const IconThemeData(color: Colors.amberAccent, size: 40),
         selectedItemColor: Colors.amberAccent,
         selectedLabelStyle: const TextStyle(fontWeight: FontWeight.bold),
         items: const <BottomNavigationBarItem>[
