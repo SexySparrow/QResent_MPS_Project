@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'scan_qr.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -66,11 +67,17 @@ class _HomePage extends State<HomePage> {
               ),
               TextButton(
                   style: flatButtonStyle,
-                  onPressed: () {},
+                  onPressed: () {
+                    _showScan();
+                  },
                   child: const Text("Scan QR")),
             ],
           ),
         ));
+  }
+
+  _showScan() async {
+    await showDialog(context: context, builder: (context) => const Scan());
   }
 
   _showCourses() async {
