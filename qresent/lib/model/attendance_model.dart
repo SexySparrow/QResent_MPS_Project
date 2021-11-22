@@ -1,5 +1,5 @@
 class AttendanceModel {
-  Map<String, Map<String, int>> dates;
+  Map<String, dynamic> dates;
   int total;
 
   AttendanceModel({
