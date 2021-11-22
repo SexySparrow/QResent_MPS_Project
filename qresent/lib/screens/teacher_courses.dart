@@ -5,7 +5,6 @@ import 'package:intl/intl.dart';
 import 'package:qresent/model/attendance_model.dart';
 import 'package:qresent/model/course_model.dart';
 import 'package:qresent/model/user_model.dart';
-
 import 'generate_qr.dart';
 
 class TeacherCourses extends StatefulWidget {
@@ -32,9 +31,9 @@ class _TeacherCoursesState extends State<TeacherCourses> {
 
   @override
   void initState() {
+    super.initState();
     getCourses();
     _searchController.addListener(_onSearchChanged);
-    super.initState();
   }
 
   @override
@@ -68,10 +67,9 @@ class _TeacherCoursesState extends State<TeacherCourses> {
         .where("Email", isEqualTo: user?.email)
         .get()
         .then((QuerySnapshot snapshot) {
-      for (var documentSnapshot in snapshot.docs) {
-        teacher = UserModel.fromMap(documentSnapshot.data());
-      }
+      teacher = UserModel.fromMap(snapshot.docs[0].data());
     });
+
     await coursesRef
         .where("UID", whereIn: teacher.assignedCourses)
         .get()
@@ -84,8 +82,8 @@ class _TeacherCoursesState extends State<TeacherCourses> {
     setState(() {
       _coursesList = courseListTemp;
     });
-    for (CourseModel course in courseListTemp) {
-      getIntervals(course);
+    for (CourseModel course in _coursesList) {
+      await getIntervals(course);
     }
     searchResultList();
   }
@@ -165,23 +163,27 @@ class _TeacherCoursesState extends State<TeacherCourses> {
               child: Row(
                 children: <Widget>[
                   Expanded(
-                      child: DropdownButtonFormField(
-                          value: selectedValueDay,
-                          onChanged: (String? newValue) {
-                            setState(() {
+                    child: DropdownButtonFormField(
+                        value: selectedValueDay,
+                        onChanged: (String? newValue) {
+                          setState(
+                            () {
                               selectedValueDay = newValue!;
-                            });
-                          },
-                          items: dropdownItemsDays)),
+                            },
+                          );
+                        },
+                        items: dropdownItemsDays),
+                  ),
                   Expanded(
-                      child: DropdownButtonFormField(
-                          value: selectedValueHour,
-                          onChanged: (String? newValue) {
-                            setState(() {
-                              selectedValueHour = newValue!;
-                            });
-                          },
-                          items: dropdownItemsHours)),
+                    child: DropdownButtonFormField(
+                        value: selectedValueHour,
+                        onChanged: (String? newValue) {
+                          setState(() {
+                            selectedValueHour = newValue!;
+                          });
+                        },
+                        items: dropdownItemsHours),
+                  ),
                 ],
               ),
             ),
@@ -203,6 +205,78 @@ class _TeacherCoursesState extends State<TeacherCourses> {
                 ),
               ],
             ),
+          ],
+        );
+      },
+    );
+  }
+
+  createEdtiAlertDialog(BuildContext context, CourseModel course) {
+    final TextEditingController _courseInformation = TextEditingController();
+
+    setState(() {
+      _courseInformation.text = course.information!;
+    });
+
+    return showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text(
+            course.uid,
+            textAlign: TextAlign.center,
+          ),
+          content: TextField(
+            controller: _courseInformation,
+            maxLines: null,
+            keyboardType: TextInputType.multiline,
+          ),
+          actions: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                TextButton(
+                  onPressed: () {
+                    addCourseInformation(_courseInformation.text, course);
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text("Save"),
+                ),
+              ],
+            )
+          ],
+        );
+      },
+    );
+  }
+
+  addCourseInformation(String information, CourseModel course) async {
+    await coursesRef.doc(course.uid).update({"Information": information});
+    getCourses();
+  }
+
+  createInfoAlertDialog(BuildContext context, CourseModel course) {
+    return showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text(
+            course.uid,
+            textAlign: TextAlign.center,
+          ),
+          content: Text(course.information!),
+          actions: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text("Exit"),
+                ),
+              ],
+            )
           ],
         );
       },
@@ -300,93 +374,115 @@ class _TeacherCoursesState extends State<TeacherCourses> {
                 ),
                 Expanded(
                   child: ListView.builder(
-                      itemCount: _resultsList.length,
-                      itemBuilder: (context, index) {
-                        return Card(
-                          child: ListTile(
-                            title: Text(_resultsList[index].uid),
-                            subtitle: ListView.builder(
-                                physics: const ClampingScrollPhysics(),
-                                shrinkWrap: true,
-                                itemCount:
-                                    intervals[_resultsList[index]]!.length,
-                                itemBuilder: (context, intervalIndex) {
-                                  return Card(
-                                      child: ListTile(
-                                          title: Text(
-                                              intervals[_resultsList[index]]!
-                                                  .elementAt(intervalIndex)),
-                                          trailing: SizedBox(
-                                              width: 120,
-                                              child: Row(
-                                                children: <Widget>[
-                                                  IconButton(
-                                                      onPressed: () {
-                                                        createDeleteAlertDialog(
-                                                            context,
-                                                            _resultsList[index],
-                                                            intervals[
-                                                                    _resultsList[
-                                                                        index]]!
-                                                                .elementAt(
-                                                                    intervalIndex));
-                                                      },
-                                                      icon: const Icon(
-                                                        Icons.delete,
-                                                        color: Colors.red,
-                                                        size: 32,
-                                                      )),
-                                                  IconButton(
-                                                      tooltip: "Attendance",
-                                                      onPressed: () {
-                                                        generateQR(
-                                                            _resultsList[index]
-                                                                .uid,
-                                                            intervals[
-                                                                    _resultsList[
-                                                                        index]]!
-                                                                .elementAt(
-                                                                    intervalIndex),
-                                                            "present");
-                                                      },
-                                                      icon: const Icon(
-                                                        Icons.qr_code_2,
-                                                        size: 32,
-                                                      )),
-                                                  IconButton(
-                                                      tooltip: "Activity",
-                                                      onPressed: () {
-                                                        generateQR(
-                                                            _resultsList[index]
-                                                                .uid,
-                                                            intervals[
-                                                                    _resultsList[
-                                                                        index]]!
-                                                                .elementAt(
-                                                                    intervalIndex),
-                                                            "active");
-                                                      },
-                                                      icon: const Icon(
-                                                        Icons.qr_code_2,
-                                                        size: 32,
-                                                      ))
-                                                ],
-                                              ))));
-                                }),
-                            trailing: IconButton(
-                                onPressed: () {
-                                  createAddAlertDialog(
-                                      context, _resultsList[index]);
-                                },
-                                alignment: Alignment.center,
-                                icon: const Icon(
-                                  Icons.add,
-                                  color: Colors.grey,
-                                  size: 32,
-                                )),
+                    itemCount: _resultsList.length,
+                    itemBuilder: (context, index) {
+                      return Card(
+                        child: ListTile(
+                          title: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Row(
+                                children: [
+                                  Text(_resultsList[index].uid),
+                                ],
+                              ),
+                              Row(
+                                children: [
+                                  IconButton(
+                                    onPressed: () {
+                                      createInfoAlertDialog(
+                                          context, _resultsList[index]);
+                                    },
+                                    alignment: Alignment.center,
+                                    icon: const Icon(
+                                      Icons.info,
+                                      color: Colors.blueAccent,
+                                      size: 32,
+                                    ),
+                                  ),
+                                  IconButton(
+                                    onPressed: () {
+                                      createEdtiAlertDialog(
+                                          context, _resultsList[index]);
+                                    },
+                                    alignment: Alignment.center,
+                                    icon: const Icon(
+                                      Icons.edit,
+                                      color: Colors.grey,
+                                      size: 32,
+                                    ),
+                                  ),
+                                  IconButton(
+                                    onPressed: () {
+                                      createAddAlertDialog(
+                                        context,
+                                        _resultsList[index],
+                                      );
+                                    },
+                                    alignment: Alignment.center,
+                                    icon: const Icon(
+                                      Icons.add,
+                                      color: Colors.grey,
+                                      size: 32,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
                           ),
-                        );
-                      }),
+                          subtitle: ListView.builder(
+                            physics: const ClampingScrollPhysics(),
+                            shrinkWrap: true,
+                            itemCount: intervals[_resultsList[index]]!.length,
+                            itemBuilder: (context, intervalIndex) {
+                              return Card(
+                                child: ListTile(
+                                  title: Text(
+                                    intervals[_resultsList[index]]!
+                                        .elementAt(intervalIndex),
+                                  ),
+                                  trailing: SizedBox(
+                                    width: 100,
+                                    child: Row(
+                                      children: <Widget>[
+                                        IconButton(
+                                          onPressed: () {
+                                            createDeleteAlertDialog(
+                                              context,
+                                              _resultsList[index],
+                                              intervals[_resultsList[index]]!
+                                                  .elementAt(intervalIndex),
+                                            );
+                                          },
+                                          icon: const Icon(
+                                            Icons.delete,
+                                            color: Colors.red,
+                                            size: 32,
+                                          ),
+                                        ),
+                                        IconButton(
+                                          onPressed: () {
+                                            generateQR(
+                                                _resultsList[index].uid,
+                                                intervals[_resultsList[index]]!
+                                                    .elementAt(intervalIndex));
+                                          },
+                                          icon: const Icon(
+                                            Icons.qr_code,
+                                            size: 32,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                      );
+                    },
+                  ),
                 ),
               ],
             ),
