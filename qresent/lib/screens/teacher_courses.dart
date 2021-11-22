@@ -1,9 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:qresent/model/attendance_model.dart';
 import 'package:qresent/model/course_model.dart';
 import 'package:qresent/model/user_model.dart';
+
 import 'generate_qr.dart';
 
 class TeacherCourses extends StatefulWidget {
@@ -30,9 +32,9 @@ class _TeacherCoursesState extends State<TeacherCourses> {
 
   @override
   void initState() {
-    super.initState();
     getCourses();
     _searchController.addListener(_onSearchChanged);
+    super.initState();
   }
 
   @override
@@ -42,10 +44,24 @@ class _TeacherCoursesState extends State<TeacherCourses> {
     super.dispose();
   }
 
-  Future<void> generateQR(String course, String interval) async {
-    Navigator.of(context).push(MaterialPageRoute(
-        builder: (context) =>
-            GenerateQRPage(course: course, interval: interval)));
+  Future<void> generateQR(String course, String interval, String type) async {
+    if (type == "present") {
+      String date = DateFormat('dd-MM-yyyy').format(DateTime.now());
+      await attendancesRef.doc(course + " " + interval).get().then((value) {
+        AttendanceModel attendance = AttendanceModel.fromMap(value.data());
+        attendance.dates.putIfAbsent(date, () => []);
+        attendancesRef.doc(course + " " + interval).set(attendance.toMap());
+      });
+    }
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => GenerateQRPage(
+          course: course,
+          interval: interval,
+          type: type,
+        ),
+      ),
+    );
   }
 
   getCourses() async {
@@ -55,9 +71,10 @@ class _TeacherCoursesState extends State<TeacherCourses> {
         .where("Email", isEqualTo: user?.email)
         .get()
         .then((QuerySnapshot snapshot) {
-      teacher = UserModel.fromMap(snapshot.docs[0].data());
+      for (var documentSnapshot in snapshot.docs) {
+        teacher = UserModel.fromMap(documentSnapshot.data());
+      }
     });
-
     await coursesRef
         .where("UID", whereIn: teacher.assignedCourses)
         .get()
@@ -70,8 +87,8 @@ class _TeacherCoursesState extends State<TeacherCourses> {
     setState(() {
       _coursesList = courseListTemp;
     });
-    for (CourseModel course in _coursesList) {
-      await getIntervals(course);
+    for (CourseModel course in courseListTemp) {
+      getIntervals(course);
     }
     searchResultList();
   }
@@ -124,7 +141,7 @@ class _TeacherCoursesState extends State<TeacherCourses> {
       "Intervals": FieldValue.arrayUnion([day + " " + hour])
     });
     AttendanceModel attendance =
-        AttendanceModel(dates: <String, Map<String, int>>{}, total: 0);
+        AttendanceModel(dates: <String, List<List<String>>>{}, total: 0);
     await attendancesRef
         .doc(course.uid + " " + day + " " + hour)
         .set(attendance.toMap());
@@ -151,27 +168,23 @@ class _TeacherCoursesState extends State<TeacherCourses> {
               child: Row(
                 children: <Widget>[
                   Expanded(
-                    child: DropdownButtonFormField(
-                        value: selectedValueDay,
-                        onChanged: (String? newValue) {
-                          setState(
-                            () {
+                      child: DropdownButtonFormField(
+                          value: selectedValueDay,
+                          onChanged: (String? newValue) {
+                            setState(() {
                               selectedValueDay = newValue!;
-                            },
-                          );
-                        },
-                        items: dropdownItemsDays),
-                  ),
+                            });
+                          },
+                          items: dropdownItemsDays)),
                   Expanded(
-                    child: DropdownButtonFormField(
-                        value: selectedValueHour,
-                        onChanged: (String? newValue) {
-                          setState(() {
-                            selectedValueHour = newValue!;
-                          });
-                        },
-                        items: dropdownItemsHours),
-                  ),
+                      child: DropdownButtonFormField(
+                          value: selectedValueHour,
+                          onChanged: (String? newValue) {
+                            setState(() {
+                              selectedValueHour = newValue!;
+                            });
+                          },
+                          items: dropdownItemsHours)),
                 ],
               ),
             ),
@@ -193,78 +206,6 @@ class _TeacherCoursesState extends State<TeacherCourses> {
                 ),
               ],
             ),
-          ],
-        );
-      },
-    );
-  }
-
-  createEdtiAlertDialog(BuildContext context, CourseModel course) {
-    final TextEditingController _courseInformation = TextEditingController();
-
-    setState(() {
-      _courseInformation.text = course.information!;
-    });
-
-    return showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: Text(
-            course.uid,
-            textAlign: TextAlign.center,
-          ),
-          content: TextField(
-            controller: _courseInformation,
-            maxLines: null,
-            keyboardType: TextInputType.multiline,
-          ),
-          actions: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                TextButton(
-                  onPressed: () {
-                    addCourseInformation(_courseInformation.text, course);
-                    Navigator.of(context).pop();
-                  },
-                  child: const Text("Save"),
-                ),
-              ],
-            )
-          ],
-        );
-      },
-    );
-  }
-
-  addCourseInformation(String information, CourseModel course) async {
-    await coursesRef.doc(course.uid).update({"Information": information});
-    getCourses();
-  }
-
-  createInfoAlertDialog(BuildContext context, CourseModel course) {
-    return showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: Text(
-            course.uid,
-            textAlign: TextAlign.center,
-          ),
-          content: Text(course.information!),
-          actions: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: const Text("Exit"),
-                ),
-              ],
-            )
           ],
         );
       },
@@ -366,58 +307,7 @@ class _TeacherCoursesState extends State<TeacherCourses> {
                     itemBuilder: (context, index) {
                       return Card(
                         child: ListTile(
-                          title: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Row(
-                                children: [
-                                  Text(_resultsList[index].uid),
-                                ],
-                              ),
-                              Row(
-                                children: [
-                                  IconButton(
-                                    onPressed: () {
-                                      createInfoAlertDialog(
-                                          context, _resultsList[index]);
-                                    },
-                                    alignment: Alignment.center,
-                                    icon: const Icon(
-                                      Icons.info,
-                                      color: Colors.blueAccent,
-                                      size: 32,
-                                    ),
-                                  ),
-                                  IconButton(
-                                    onPressed: () {
-                                      createEdtiAlertDialog(
-                                          context, _resultsList[index]);
-                                    },
-                                    alignment: Alignment.center,
-                                    icon: const Icon(
-                                      Icons.edit,
-                                      color: Colors.grey,
-                                      size: 32,
-                                    ),
-                                  ),
-                                  IconButton(
-                                    onPressed: () {
-                                      createAddAlertDialog(
-                                        context,
-                                        _resultsList[index],
-                                      );
-                                    },
-                                    alignment: Alignment.center,
-                                    icon: const Icon(
-                                      Icons.add,
-                                      color: Colors.grey,
-                                      size: 32,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
+                          title: Text(_resultsList[index].uid),
                           subtitle: ListView.builder(
                             physics: const ClampingScrollPhysics(),
                             shrinkWrap: true,
@@ -430,7 +320,7 @@ class _TeacherCoursesState extends State<TeacherCourses> {
                                         .elementAt(intervalIndex),
                                   ),
                                   trailing: SizedBox(
-                                    width: 100,
+                                    width: 120,
                                     child: Row(
                                       children: <Widget>[
                                         IconButton(
@@ -449,23 +339,51 @@ class _TeacherCoursesState extends State<TeacherCourses> {
                                           ),
                                         ),
                                         IconButton(
+                                            tooltip: "Attendance",
+                                            onPressed: () {
+                                              generateQR(
+                                                  _resultsList[index].uid,
+                                                  intervals[
+                                                          _resultsList[index]]!
+                                                      .elementAt(intervalIndex),
+                                                  "present");
+                                            },
+                                            icon: const Icon(
+                                              Icons.qr_code_2,
+                                              size: 32,
+                                            )),
+                                        IconButton(
+                                          tooltip: "Activity",
                                           onPressed: () {
                                             generateQR(
                                                 _resultsList[index].uid,
                                                 intervals[_resultsList[index]]!
-                                                    .elementAt(intervalIndex));
+                                                    .elementAt(intervalIndex),
+                                                "active");
                                           },
                                           icon: const Icon(
-                                            Icons.qr_code,
+                                            Icons.qr_code_2,
                                             size: 32,
                                           ),
-                                        ),
+                                        )
                                       ],
                                     ),
                                   ),
                                 ),
                               );
                             },
+                          ),
+                          trailing: IconButton(
+                            onPressed: () {
+                              createAddAlertDialog(
+                                  context, _resultsList[index]);
+                            },
+                            alignment: Alignment.center,
+                            icon: const Icon(
+                              Icons.add,
+                              color: Colors.grey,
+                              size: 32,
+                            ),
                           ),
                         ),
                       );

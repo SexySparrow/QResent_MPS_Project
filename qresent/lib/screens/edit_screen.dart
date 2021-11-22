@@ -243,7 +243,7 @@ class _EditScreenState extends State<EditScreen> {
         backgroundColor: Colors.white,
         appBar: AppBar(
           title: const Text(
-            "Edit User",
+            "Courses",
           ),
         ),
         body: Center(

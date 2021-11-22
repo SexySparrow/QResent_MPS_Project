@@ -3,10 +3,15 @@ import 'package:intl/intl.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
 class GenerateQRPage extends StatefulWidget {
-  const GenerateQRPage({Key? key, required this.interval, required this.course})
+  const GenerateQRPage(
+      {Key? key,
+      required this.interval,
+      required this.course,
+      required this.type})
       : super(key: key);
   final String interval;
   final String course;
+  final String type;
 
   @override
   _GenerateQRPageState createState() => _GenerateQRPageState();
@@ -23,7 +28,9 @@ class _GenerateQRPageState extends State<GenerateQRPage> {
       },
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Scan QR code'),
+          title: widget.type == "present"
+              ? const Text('Scan QR code for attendance')
+              : const Text('Scan QR code for activity'),
         ),
         body: SingleChildScrollView(
           child: Center(
@@ -35,7 +42,9 @@ class _GenerateQRPageState extends State<GenerateQRPage> {
                       " " +
                       widget.interval +
                       " " +
-                      date.toString(),
+                      date.toString() +
+                      " " +
+                      widget.type,
                   size: 300,
                   embeddedImageStyle:
                       QrEmbeddedImageStyle(size: const Size(80, 80)),
