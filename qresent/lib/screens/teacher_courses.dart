@@ -53,12 +53,15 @@ class _TeacherCoursesState extends State<TeacherCourses> {
         attendancesRef.doc(course + " " + interval).set(attendance.toMap());
       });
     }
-    Navigator.of(context).push(MaterialPageRoute(
+    Navigator.of(context).push(
+      MaterialPageRoute(
         builder: (context) => GenerateQRPage(
-              course: course,
-              interval: interval,
-              type: type,
-            )));
+          course: course,
+          interval: interval,
+          type: type,
+        ),
+      ),
+    );
   }
 
   getCourses() async {
@@ -300,93 +303,92 @@ class _TeacherCoursesState extends State<TeacherCourses> {
                 ),
                 Expanded(
                   child: ListView.builder(
-                      itemCount: _resultsList.length,
-                      itemBuilder: (context, index) {
-                        return Card(
-                          child: ListTile(
-                            title: Text(_resultsList[index].uid),
-                            subtitle: ListView.builder(
-                                physics: const ClampingScrollPhysics(),
-                                shrinkWrap: true,
-                                itemCount:
-                                    intervals[_resultsList[index]]!.length,
-                                itemBuilder: (context, intervalIndex) {
-                                  return Card(
-                                      child: ListTile(
-                                          title: Text(
+                    itemCount: _resultsList.length,
+                    itemBuilder: (context, index) {
+                      return Card(
+                        child: ListTile(
+                          title: Text(_resultsList[index].uid),
+                          subtitle: ListView.builder(
+                            physics: const ClampingScrollPhysics(),
+                            shrinkWrap: true,
+                            itemCount: intervals[_resultsList[index]]!.length,
+                            itemBuilder: (context, intervalIndex) {
+                              return Card(
+                                child: ListTile(
+                                  title: Text(
+                                    intervals[_resultsList[index]]!
+                                        .elementAt(intervalIndex),
+                                  ),
+                                  trailing: SizedBox(
+                                    width: 120,
+                                    child: Row(
+                                      children: <Widget>[
+                                        IconButton(
+                                          onPressed: () {
+                                            createDeleteAlertDialog(
+                                              context,
+                                              _resultsList[index],
                                               intervals[_resultsList[index]]!
-                                                  .elementAt(intervalIndex)),
-                                          trailing: SizedBox(
-                                              width: 120,
-                                              child: Row(
-                                                children: <Widget>[
-                                                  IconButton(
-                                                      onPressed: () {
-                                                        createDeleteAlertDialog(
-                                                            context,
-                                                            _resultsList[index],
-                                                            intervals[
-                                                                    _resultsList[
-                                                                        index]]!
-                                                                .elementAt(
-                                                                    intervalIndex));
-                                                      },
-                                                      icon: const Icon(
-                                                        Icons.delete,
-                                                        color: Colors.red,
-                                                        size: 32,
-                                                      )),
-                                                  IconButton(
-                                                      tooltip: "Attendance",
-                                                      onPressed: () {
-                                                        generateQR(
-                                                            _resultsList[index]
-                                                                .uid,
-                                                            intervals[
-                                                                    _resultsList[
-                                                                        index]]!
-                                                                .elementAt(
-                                                                    intervalIndex),
-                                                            "present");
-                                                      },
-                                                      icon: const Icon(
-                                                        Icons.qr_code_2,
-                                                        size: 32,
-                                                      )),
-                                                  IconButton(
-                                                      tooltip: "Activity",
-                                                      onPressed: () {
-                                                        generateQR(
-                                                            _resultsList[index]
-                                                                .uid,
-                                                            intervals[
-                                                                    _resultsList[
-                                                                        index]]!
-                                                                .elementAt(
-                                                                    intervalIndex),
-                                                            "active");
-                                                      },
-                                                      icon: const Icon(
-                                                        Icons.qr_code_2,
-                                                        size: 32,
-                                                      ))
-                                                ],
-                                              ))));
-                                }),
-                            trailing: IconButton(
-                                onPressed: () {
-                                  createAddAlertDialog(
-                                      context, _resultsList[index]);
-                                },
-                                alignment: Alignment.center,
-                                icon: const Icon(
-                                  Icons.add,
-                                  color: Colors.grey,
-                                  size: 32,
-                                )),
+                                                  .elementAt(intervalIndex),
+                                            );
+                                          },
+                                          icon: const Icon(
+                                            Icons.delete,
+                                            color: Colors.red,
+                                            size: 32,
+                                          ),
+                                        ),
+                                        IconButton(
+                                            tooltip: "Attendance",
+                                            onPressed: () {
+                                              generateQR(
+                                                  _resultsList[index].uid,
+                                                  intervals[
+                                                          _resultsList[index]]!
+                                                      .elementAt(intervalIndex),
+                                                  "present");
+                                            },
+                                            icon: const Icon(
+                                              Icons.qr_code_2,
+                                              size: 32,
+                                            )),
+                                        IconButton(
+                                          tooltip: "Activity",
+                                          onPressed: () {
+                                            generateQR(
+                                                _resultsList[index].uid,
+                                                intervals[_resultsList[index]]!
+                                                    .elementAt(intervalIndex),
+                                                "active");
+                                          },
+                                          icon: const Icon(
+                                            Icons.qr_code_2,
+                                            size: 32,
+                                          ),
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
                           ),
-                        );
-                      }),
+                          trailing: IconButton(
+                            onPressed: () {
+                              createAddAlertDialog(
+                                  context, _resultsList[index]);
+                            },
+                            alignment: Alignment.center,
+                            icon: const Icon(
+                              Icons.add,
+                              color: Colors.grey,
+                              size: 32,
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
                 ),
               ],
             ),
