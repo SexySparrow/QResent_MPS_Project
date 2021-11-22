@@ -25,11 +25,6 @@ class _Profile extends State<Profile> {
     super.initState();
   }
 
-  @override
-  void dispose() {
-    super.dispose();
-  }
-
   getUsers() async {
     final User? user = auth.currentUser;
     final uid = user?.uid;
@@ -43,97 +38,62 @@ class _Profile extends State<Profile> {
       lastNameUser = userData["LastName"];
       uidUser = userData["UID"];
       groupUser = userData["Group"];
-      groupController.text = groupUser;
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _body(context),
-      appBar: AppBar(
-        centerTitle: true,
-        title: const Text('Profile'),
-      ),
+      appBar: AppBar(centerTitle: true, title: const Text('Profile')),
       bottomNavigationBar: Container(
         padding: const EdgeInsets.all(5),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: <Widget>[
             FloatingActionButton(
-              elevation: 0.0,
-              mini: true,
-              child: const Icon(
-                Icons.edit,
-                color: Colors.white,
-              ),
-              backgroundColor: Colors.blueAccent,
-              onPressed: () {
-                changeCourse();
-              },
-            )
+                elevation: 0.0,
+                mini: true,
+                child: const Icon(Icons.edit, color: Colors.white),
+                backgroundColor: Colors.blueAccent,
+                onPressed: () {
+                  changeCourse();
+                })
           ],
         ),
       ),
+      body: _body(context),
     );
   }
 
-  _body(BuildContext context) => ListView(
-        physics: const BouncingScrollPhysics(),
-        children: <Widget>[
-          Container(
+  _body(BuildContext context) =>
+      ListView(physics: const BouncingScrollPhysics(), children: <Widget>[
+        Container(
             padding: const EdgeInsets.all(15),
-            child: Column(
-              children: <Widget>[
-                _headerSignUp(),
-                _formUI(),
-              ],
-            ),
-          ),
-        ],
-      );
-
-  _headerSignUp() => Column(
-        children: <Widget>[
-          const SizedBox(
-            height: 80,
-            child: Icon(
-              Icons.account_circle,
-              color: Colors.blueAccent,
-              size: 90,
-            ),
-          ),
-          const SizedBox(
-            height: 12.0,
-          ),
-          Text(
-            firstNameUser + " " + lastNameUser,
+            child: Column(children: <Widget>[_headerSignUp(), _formUI()]))
+      ]);
+  _headerSignUp() => Column(children: <Widget>[
+        const SizedBox(
+            height: 80, child: Icon(Icons.supervised_user_circle, size: 90)),
+        const SizedBox(height: 12.0),
+        Text(firstNameUser + " " + lastNameUser,
             style: const TextStyle(
-              fontWeight: FontWeight.w700,
-              fontSize: 20.0,
-              color: Colors.blueAccent,
-            ),
-          ),
-        ],
-      );
-
+                fontWeight: FontWeight.w700,
+                fontSize: 20.0,
+                color: Colors.blue)),
+      ]);
   _formUI() {
-    return SizedBox(
-      width: 400,
-      child: Center(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            const SizedBox(height: 40.0),
-            _email(),
-            const SizedBox(height: 40.0),
-            _emailUser(),
-            const SizedBox(height: 40.0),
-            _groupUser(),
-            const SizedBox(height: 12.0),
-          ],
-        ),
-      ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        const SizedBox(height: 40.0),
+        _email(),
+        const SizedBox(height: 40.0),
+        _emailUser(),
+        const SizedBox(height: 40.0),
+        _groupUser(),
+        const SizedBox(height: 12.0),
+        _uid(),
+      ],
     );
   }
 
@@ -143,17 +103,12 @@ class _Profile extends State<Profile> {
       Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          const Text(
-            'Email',
-            style: TextStyle(
-              fontWeight: FontWeight.w700,
-              fontSize: 15.0,
-              color: Colors.grey,
-            ),
-          ),
-          const SizedBox(
-            height: 1,
-          ),
+          const Text('Email',
+              style: TextStyle(
+                  fontWeight: FontWeight.w700,
+                  fontSize: 15.0,
+                  color: Colors.grey)),
+          const SizedBox(height: 1),
           Text(emailUser)
         ],
       )
@@ -161,125 +116,114 @@ class _Profile extends State<Profile> {
   }
 
   _emailUser() {
-    return Row(
-      children: <Widget>[
-        _prefixIcon(Icons.email_outlined),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            const Text(
-              'Institution Email',
+    return Row(children: <Widget>[
+      _prefixIcon(Icons.email_outlined),
+      Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          const Text('Institution Email',
               style: TextStyle(
                   fontWeight: FontWeight.w700,
                   fontSize: 15.0,
-                  color: Colors.grey),
-            ),
-            const SizedBox(height: 1),
-            Text(firstNameUser.toLowerCase() +
-                "." +
-                lastNameUser.toLowerCase() +
-                "@stud.acs.upb.ro")
-          ],
-        )
-      ],
-    );
+                  color: Colors.grey)),
+          const SizedBox(height: 1),
+          Text(firstNameUser.toLowerCase() +
+              "." +
+              lastNameUser.toLowerCase() +
+              "@cs.com")
+        ],
+      )
+    ]);
   }
 
   _groupUser() {
-    return Row(
-      children: <Widget>[
-        _prefixIcon(Icons.group),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            const Text(
-              'Group',
+    return Row(children: <Widget>[
+      _prefixIcon(Icons.group),
+      Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          const Text('Group',
               style: TextStyle(
                   fontWeight: FontWeight.w700,
                   fontSize: 15.0,
-                  color: Colors.grey),
-            ),
-            const SizedBox(
-              height: 1,
-            ),
-            Text(groupUser)
-          ],
-        )
-      ],
-    );
+                  color: Colors.grey)),
+          const SizedBox(height: 1),
+          Text(groupUser)
+        ],
+      )
+    ]);
+  }
+
+  _uid() {
+    return Row(children: <Widget>[
+      _prefixIcon(Icons.adb_sharp),
+      Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          const Text('UID',
+              style: TextStyle(
+                  fontWeight: FontWeight.w700,
+                  fontSize: 15.0,
+                  color: Colors.grey)),
+          const SizedBox(height: 1),
+          Text(uidUser)
+        ],
+      )
+    ]);
   }
 
   _prefixIcon(IconData iconData) {
     return ConstrainedBox(
-      constraints: const BoxConstraints(
-        minWidth: 48.0,
-        minHeight: 48.0,
-      ),
+      constraints: const BoxConstraints(minWidth: 48.0, minHeight: 48.0),
       child: Container(
-        padding: const EdgeInsets.only(
-          top: 16.0,
-          bottom: 16.0,
-        ),
-        margin: const EdgeInsets.only(
-          right: 8.0,
-        ),
-        decoration: BoxDecoration(
-          color: Colors.grey.withOpacity(0.2),
-          borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(30.0),
-            bottomLeft: Radius.circular(30.0),
-            topRight: Radius.circular(30.0),
-            bottomRight: Radius.circular(10.0),
-          ),
-        ),
-        child: Icon(
-          iconData,
-          size: 20,
-          color: Colors.grey,
-        ),
-      ),
+          padding: const EdgeInsets.only(top: 16.0, bottom: 16.0),
+          margin: const EdgeInsets.only(right: 8.0),
+          decoration: BoxDecoration(
+              color: Colors.grey.withOpacity(0.2),
+              borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(30.0),
+                  bottomLeft: Radius.circular(30.0),
+                  topRight: Radius.circular(30.0),
+                  bottomRight: Radius.circular(10.0))),
+          child: Icon(
+            iconData,
+            size: 20,
+            color: Colors.grey,
+          )),
     );
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   changeCourse() async {
     await showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text(
-          "Change group",
-          textAlign: TextAlign.center,
-        ),
-        content: TextField(
-          controller: groupController,
-        ),
-        actions: <Widget>[
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              TextButton(
-                child: const Text(
-                  "Save",
-                  style: TextStyle(
-                    color: Colors.blueAccent,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18,
+        context: context,
+        builder: (context) => AlertDialog(
+              backgroundColor: Colors.white70,
+              title: const Text("Change group"),
+              content: TextField(
+                controller: groupController,
+              ),
+              actions: <Widget>[
+                TextButton(
+                  child: const Text(
+                    "Save",
+                    style: TextStyle(
+                        color: Colors.red, fontWeight: FontWeight.bold),
                   ),
-                ),
-                onPressed: () {
-                  setState(
-                    () {
+                  onPressed: () {
+                    setState(() {
                       groupUser = groupController.text;
                       changePermanent();
-                    },
-                  );
-                  Navigator.pop(context);
-                },
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
+                    });
+                    Navigator.pop(context);
+                  },
+                )
+              ],
+            ));
   }
 
   changePermanent() async {
