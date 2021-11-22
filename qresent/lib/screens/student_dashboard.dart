@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'student_settings.dart';
 import 'student_profile.dart';
 import 'student_home.dart';
 
@@ -21,7 +20,6 @@ class _StudentDashboardState extends State<StudentDashboard> {
 
   final List<Widget> _widgetOptions = <Widget>[
     const HomePage(),
-    const Settings(),
     const Profile(),
   ];
 
@@ -44,10 +42,6 @@ class _StudentDashboardState extends State<StudentDashboard> {
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
             label: 'HOME',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.settings),
-            label: 'SETTINGS',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.account_circle),

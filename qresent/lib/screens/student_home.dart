@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:qresent/screens/login_screen.dart';
 import 'scan_qr.dart';
 
 class HomePage extends StatefulWidget {
@@ -13,7 +15,7 @@ class HomePage extends StatefulWidget {
 class _HomePage extends State<HomePage> {
   final CollectionReference coursesRef =
       FirebaseFirestore.instance.collection("Users");
-  final FirebaseAuth auth = FirebaseAuth.instance;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
   List<dynamic> _courses = [];
   List<String> courses = [];
   var stringWord = '';
@@ -24,8 +26,18 @@ class _HomePage extends State<HomePage> {
     super.initState();
   }
 
+  Future<void> signOut() async {
+    await _auth.signOut().then((result) {
+      Fluttertoast.showToast(msg: "Signed Out");
+      Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context) => const LoginScreen()));
+    }).catchError((e) {
+      Fluttertoast.showToast(msg: e!.message);
+    });
+  }
+
   getCourses() async {
-    final User? user = auth.currentUser;
+    final User? user = _auth.currentUser;
     final uid = user?.uid;
 
     DocumentSnapshot userData =
@@ -53,6 +65,14 @@ class _HomePage extends State<HomePage> {
         appBar: AppBar(
           centerTitle: true,
           title: const Text("Home"),
+          actions: [
+            IconButton(
+              onPressed: () {
+                signOut();
+              },
+              icon: const Icon(Icons.logout),
+            )
+          ],
         ),
         body: Center(
           child: Column(

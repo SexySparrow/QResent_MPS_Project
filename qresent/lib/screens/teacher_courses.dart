@@ -48,7 +48,7 @@ class _TeacherCoursesState extends State<TeacherCourses> {
     String date = DateFormat('dd-MM-yyyy').format(DateTime.now());
     await attendancesRef.doc(course + " " + interval).get().then((value) {
       AttendanceModel attendance = AttendanceModel.fromMap(value.data());
-      attendance.dates.putIfAbsent(date, () => {});
+      attendance.dates.putIfAbsent(date, () => {"present": [], "active": []});
       attendancesRef.doc(course + " " + interval).set(attendance.toMap());
     });
 
