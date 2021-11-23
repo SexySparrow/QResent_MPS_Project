@@ -44,10 +44,11 @@ class _Profile extends State<Profile> {
 
   getUsers() async {
     final User? user = _auth.currentUser;
-    final uid = user?.uid;
 
-    DocumentSnapshot userData =
-        await FirebaseFirestore.instance.collection("Users").doc(uid).get();
+    DocumentSnapshot userData = await FirebaseFirestore.instance
+        .collection("Users")
+        .doc(user?.uid)
+        .get();
 
     setState(() {
       emailUser = userData["Email"];
@@ -62,6 +63,13 @@ class _Profile extends State<Profile> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: FloatingActionButton(
+        child: const Icon(Icons.edit),
+        onPressed: () {
+          changeCourse();
+        },
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       body: _body(context),
       appBar: AppBar(
         centerTitle: true,
@@ -74,26 +82,6 @@ class _Profile extends State<Profile> {
             icon: const Icon(Icons.logout),
           )
         ],
-      ),
-      bottomNavigationBar: Container(
-        padding: const EdgeInsets.all(5),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: <Widget>[
-            FloatingActionButton(
-              elevation: 0.0,
-              mini: true,
-              child: const Icon(
-                Icons.edit,
-                color: Colors.white,
-              ),
-              backgroundColor: Colors.blueAccent,
-              onPressed: () {
-                changeCourse();
-              },
-            )
-          ],
-        ),
       ),
     );
   }
@@ -304,11 +292,10 @@ class _Profile extends State<Profile> {
 
   changePermanent() async {
     final User? user = _auth.currentUser;
-    final uid = user?.uid;
 
     FirebaseFirestore.instance
         .collection("Users")
-        .doc(uid)
+        .doc(user?.uid)
         .update({"Group": groupUser});
   }
 }

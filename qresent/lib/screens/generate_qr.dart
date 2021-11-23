@@ -29,6 +29,7 @@ class _GenerateQRPageState extends State<GenerateQRPage> {
       },
       child: Scaffold(
         appBar: AppBar(
+          centerTitle: true,
           title: const Text('Scan QR Code'),
         ),
         body: Center(

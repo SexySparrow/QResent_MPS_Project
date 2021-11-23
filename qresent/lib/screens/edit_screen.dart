@@ -274,6 +274,7 @@ class _EditScreenState extends State<EditScreen> {
                       itemCount: _resultsList.length,
                       itemBuilder: (context, index) {
                         return Card(
+                          elevation: 4,
                           child: ListTile(
                             title: Text(
                                 "${_resultsList[index].firstName} ${_resultsList[index].lastName}"),

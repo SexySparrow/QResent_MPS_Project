@@ -498,6 +498,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     userModel.lastName = lastNameController.text;
     userModel.assignedCourses = _courses;
     if (dropdownValue == "Student") {
+      userModel.group = "-";
       userModel.accessLevel = "0";
     } else if (dropdownValue == "Teacher") {
       userModel.accessLevel = "1";

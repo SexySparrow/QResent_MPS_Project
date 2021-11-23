@@ -33,10 +33,10 @@ class _StudentDashboardState extends State<StudentDashboard> {
         mouseCursor: SystemMouseCursors.grab,
         backgroundColor: Colors.blueAccent,
         elevation: 0,
-        selectedFontSize: 20,
+        selectedFontSize: 18,
         selectedIconTheme:
-            const IconThemeData(color: Colors.amberAccent, size: 40),
-        selectedItemColor: Colors.amberAccent,
+            const IconThemeData(color: Color(0xFFEEEEEE), size: 30),
+        selectedItemColor: const Color(0xFFEEEEEE),
         selectedLabelStyle: const TextStyle(fontWeight: FontWeight.bold),
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
