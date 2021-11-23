@@ -1,6 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import "package:flutter/material.dart";
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:qresent/screens/login_screen.dart';
 
 String emailUser = '-';
 String firstNameUser = '-';
@@ -16,7 +18,7 @@ class Profile extends StatefulWidget {
 }
 
 class _Profile extends State<Profile> {
-  final FirebaseAuth auth = FirebaseAuth.instance;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
   TextEditingController groupController = TextEditingController();
 
   @override
@@ -25,12 +27,28 @@ class _Profile extends State<Profile> {
     super.initState();
   }
 
-  getUsers() async {
-    final User? user = auth.currentUser;
-    final uid = user?.uid;
+  @override
+  void dispose() {
+    super.dispose();
+  }
 
-    DocumentSnapshot userData =
-        await FirebaseFirestore.instance.collection("Users").doc(uid).get();
+  Future<void> signOut() async {
+    await _auth.signOut().then((result) {
+      Fluttertoast.showToast(msg: "Signed Out");
+      Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context) => const LoginScreen()));
+    }).catchError((e) {
+      Fluttertoast.showToast(msg: e!.message);
+    });
+  }
+
+  getUsers() async {
+    final User? user = _auth.currentUser;
+
+    DocumentSnapshot userData = await FirebaseFirestore.instance
+        .collection("Users")
+        .doc(user?.uid)
+        .get();
 
     setState(() {
       emailUser = userData["Email"];
@@ -38,62 +56,92 @@ class _Profile extends State<Profile> {
       lastNameUser = userData["LastName"];
       uidUser = userData["UID"];
       groupUser = userData["Group"];
+      groupController.text = groupUser;
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(centerTitle: true, title: const Text('Profile')),
-      bottomNavigationBar: Container(
-        padding: const EdgeInsets.all(5),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: <Widget>[
-            FloatingActionButton(
-                elevation: 0.0,
-                mini: true,
-                child: const Icon(Icons.edit, color: Colors.white),
-                backgroundColor: Colors.blueAccent,
-                onPressed: () {
-                  changeCourse();
-                })
-          ],
-        ),
+      floatingActionButton: FloatingActionButton(
+        child: const Icon(Icons.edit),
+        onPressed: () {
+          changeCourse();
+        },
       ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       body: _body(context),
+      appBar: AppBar(
+        centerTitle: true,
+        title: const Text('Profile'),
+        actions: [
+          IconButton(
+            onPressed: () {
+              signOut();
+            },
+            icon: const Icon(Icons.logout),
+          )
+        ],
+      ),
     );
   }
 
-  _body(BuildContext context) =>
-      ListView(physics: const BouncingScrollPhysics(), children: <Widget>[
-        Container(
+  _body(BuildContext context) => ListView(
+        physics: const BouncingScrollPhysics(),
+        children: <Widget>[
+          Container(
             padding: const EdgeInsets.all(15),
-            child: Column(children: <Widget>[_headerSignUp(), _formUI()]))
-      ]);
-  _headerSignUp() => Column(children: <Widget>[
-        const SizedBox(
-            height: 80, child: Icon(Icons.supervised_user_circle, size: 90)),
-        const SizedBox(height: 12.0),
-        Text(firstNameUser + " " + lastNameUser,
+            child: Column(
+              children: <Widget>[
+                _headerSignUp(),
+                _formUI(),
+              ],
+            ),
+          ),
+        ],
+      );
+
+  _headerSignUp() => Column(
+        children: <Widget>[
+          const SizedBox(
+            height: 80,
+            child: Icon(
+              Icons.account_circle,
+              color: Colors.blueAccent,
+              size: 90,
+            ),
+          ),
+          const SizedBox(
+            height: 12.0,
+          ),
+          Text(
+            firstNameUser + " " + lastNameUser,
             style: const TextStyle(
-                fontWeight: FontWeight.w700,
-                fontSize: 20.0,
-                color: Colors.blue)),
-      ]);
+              fontWeight: FontWeight.w700,
+              fontSize: 20.0,
+              color: Colors.blueAccent,
+            ),
+          ),
+        ],
+      );
+
   _formUI() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        const SizedBox(height: 40.0),
-        _email(),
-        const SizedBox(height: 40.0),
-        _emailUser(),
-        const SizedBox(height: 40.0),
-        _groupUser(),
-        const SizedBox(height: 12.0),
-        _uid(),
-      ],
+    return SizedBox(
+      width: 400,
+      child: Center(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            const SizedBox(height: 40.0),
+            _email(),
+            const SizedBox(height: 40.0),
+            _emailUser(),
+            const SizedBox(height: 40.0),
+            _groupUser(),
+            const SizedBox(height: 12.0),
+          ],
+        ),
+      ),
     );
   }
 
@@ -103,12 +151,17 @@ class _Profile extends State<Profile> {
       Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          const Text('Email',
-              style: TextStyle(
-                  fontWeight: FontWeight.w700,
-                  fontSize: 15.0,
-                  color: Colors.grey)),
-          const SizedBox(height: 1),
+          const Text(
+            'Email',
+            style: TextStyle(
+              fontWeight: FontWeight.w700,
+              fontSize: 15.0,
+              color: Colors.grey,
+            ),
+          ),
+          const SizedBox(
+            height: 1,
+          ),
           Text(emailUser)
         ],
       )
@@ -116,123 +169,133 @@ class _Profile extends State<Profile> {
   }
 
   _emailUser() {
-    return Row(children: <Widget>[
-      _prefixIcon(Icons.email_outlined),
-      Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          const Text('Institution Email',
+    return Row(
+      children: <Widget>[
+        _prefixIcon(Icons.email_outlined),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            const Text(
+              'Institution Email',
               style: TextStyle(
                   fontWeight: FontWeight.w700,
                   fontSize: 15.0,
-                  color: Colors.grey)),
-          const SizedBox(height: 1),
-          Text(firstNameUser.toLowerCase() +
-              "." +
-              lastNameUser.toLowerCase() +
-              "@cs.com")
-        ],
-      )
-    ]);
+                  color: Colors.grey),
+            ),
+            const SizedBox(height: 1),
+            Text(firstNameUser.toLowerCase() +
+                "." +
+                lastNameUser.toLowerCase() +
+                "@stud.acs.upb.ro")
+          ],
+        )
+      ],
+    );
   }
 
   _groupUser() {
-    return Row(children: <Widget>[
-      _prefixIcon(Icons.group),
-      Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          const Text('Group',
+    return Row(
+      children: <Widget>[
+        _prefixIcon(Icons.group),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            const Text(
+              'Group',
               style: TextStyle(
                   fontWeight: FontWeight.w700,
                   fontSize: 15.0,
-                  color: Colors.grey)),
-          const SizedBox(height: 1),
-          Text(groupUser)
-        ],
-      )
-    ]);
-  }
-
-  _uid() {
-    return Row(children: <Widget>[
-      _prefixIcon(Icons.adb_sharp),
-      Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          const Text('UID',
-              style: TextStyle(
-                  fontWeight: FontWeight.w700,
-                  fontSize: 15.0,
-                  color: Colors.grey)),
-          const SizedBox(height: 1),
-          Text(uidUser)
-        ],
-      )
-    ]);
+                  color: Colors.grey),
+            ),
+            const SizedBox(
+              height: 1,
+            ),
+            Text(groupUser)
+          ],
+        )
+      ],
+    );
   }
 
   _prefixIcon(IconData iconData) {
     return ConstrainedBox(
-      constraints: const BoxConstraints(minWidth: 48.0, minHeight: 48.0),
+      constraints: const BoxConstraints(
+        minWidth: 48.0,
+        minHeight: 48.0,
+      ),
       child: Container(
-          padding: const EdgeInsets.only(top: 16.0, bottom: 16.0),
-          margin: const EdgeInsets.only(right: 8.0),
-          decoration: BoxDecoration(
-              color: Colors.grey.withOpacity(0.2),
-              borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(30.0),
-                  bottomLeft: Radius.circular(30.0),
-                  topRight: Radius.circular(30.0),
-                  bottomRight: Radius.circular(10.0))),
-          child: Icon(
-            iconData,
-            size: 20,
-            color: Colors.grey,
-          )),
+        padding: const EdgeInsets.only(
+          top: 16.0,
+          bottom: 16.0,
+        ),
+        margin: const EdgeInsets.only(
+          right: 8.0,
+        ),
+        decoration: BoxDecoration(
+          color: Colors.grey.withOpacity(0.2),
+          borderRadius: const BorderRadius.only(
+            topLeft: Radius.circular(30.0),
+            bottomLeft: Radius.circular(30.0),
+            topRight: Radius.circular(30.0),
+            bottomRight: Radius.circular(10.0),
+          ),
+        ),
+        child: Icon(
+          iconData,
+          size: 20,
+          color: Colors.grey,
+        ),
+      ),
     );
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
   }
 
   changeCourse() async {
     await showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-              backgroundColor: Colors.white70,
-              title: const Text("Change group"),
-              content: TextField(
-                controller: groupController,
-              ),
-              actions: <Widget>[
-                TextButton(
-                  child: const Text(
-                    "Save",
-                    style: TextStyle(
-                        color: Colors.red, fontWeight: FontWeight.bold),
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text(
+          "Change group",
+          textAlign: TextAlign.center,
+        ),
+        content: TextField(
+          controller: groupController,
+        ),
+        actions: <Widget>[
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              TextButton(
+                child: const Text(
+                  "Save",
+                  style: TextStyle(
+                    color: Colors.blueAccent,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
                   ),
-                  onPressed: () {
-                    setState(() {
+                ),
+                onPressed: () {
+                  setState(
+                    () {
                       groupUser = groupController.text;
                       changePermanent();
-                    });
-                    Navigator.pop(context);
-                  },
-                )
-              ],
-            ));
+                    },
+                  );
+                  Navigator.pop(context);
+                },
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
   }
 
   changePermanent() async {
-    final User? user = auth.currentUser;
-    final uid = user?.uid;
+    final User? user = _auth.currentUser;
 
     FirebaseFirestore.instance
         .collection("Users")
-        .doc(uid)
+        .doc(user?.uid)
         .update({"Group": groupUser});
   }
 }

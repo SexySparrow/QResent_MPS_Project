@@ -216,6 +216,7 @@ class _CoursesScreenState extends State<CoursesScreen> {
                       itemCount: _resultsList.length,
                       itemBuilder: (context, index) {
                         return Card(
+                          elevation: 4,
                           child: ListTile(
                             title: Text(_resultsList[index].uid),
                             subtitle: Text(
@@ -245,6 +246,7 @@ class _CoursesScreenState extends State<CoursesScreen> {
             createAddAlertDialog(context);
           },
         ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       ),
     );
   }
