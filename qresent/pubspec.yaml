@@ -29,21 +29,22 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  http:
   intl: ^0.17.0
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
-  cupertino_icons: ^1.0.2
-  path_provider: 2.0.6
+  cupertino_icons: ^1.0.4
+  path_provider: ^2.0.7
   qr_flutter: ^4.0.0
   qr_code_scanner: ^0.6.1
   flutter_barcode_scanner: ^2.0.0
-  percent_indicator: ^3.4.0
+  excel: ^2.0.0-null-safety-3
   # Online Database For Data
   cloud_firestore: ^3.1.0
   firebase_core: ^1.10.0
   firebase_storage: ^10.1.0
   fluttertoast: ^8.0.8
-
+  percent_indicator: ^3.4.0
   # Add Authentication such as Google SignIn, Facebook SignIn, Apple SignIn, Phone Auth etc.
   firebase_auth: ^3.2.0
 
@@ -56,7 +57,7 @@ dev_dependencies:
   # activated in the `analysis_options.yaml` file located at the root of your
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
-  flutter_lints: ^1.0.0
+  flutter_lints: ^1.0.4
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
