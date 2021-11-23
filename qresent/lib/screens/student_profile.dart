@@ -183,10 +183,8 @@ class _Profile extends State<Profile> {
                   color: Colors.grey),
             ),
             const SizedBox(height: 1),
-            Text(firstNameUser.toLowerCase() +
-                "." +
-                lastNameUser.toLowerCase() +
-                "@stud.acs.upb.ro")
+            Text(
+                firstNameUser.toLowerCase() + "." + lastNameUser.toLowerCase()),
           ],
         )
       ],
