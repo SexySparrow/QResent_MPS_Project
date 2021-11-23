@@ -13,6 +13,7 @@ import 'package:qresent/model/user_model.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:qresent/screens/login_screen.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:qresent/screens/show_statistics.dart';
 
 import 'generate_qr.dart';
 
@@ -137,6 +138,12 @@ class _TeacherDashboardState extends State<TeacherDashboard> {
           ..writeAsBytesSync(fileBytes!);
       }
     });
+  }
+
+  Future<void> getStatistics(String course, String interval) async {
+    Navigator.of(context).push(MaterialPageRoute(
+        builder: (context) =>
+            ShowStatistics(interval: course + " " + interval)));
   }
 
   getCourses() async {
@@ -584,6 +591,20 @@ class _TeacherDashboardState extends State<TeacherDashboard> {
                                               },
                                               icon: const Icon(
                                                 Icons.download,
+                                                size: 32,
+                                              ),
+                                            ),
+                                            IconButton(
+                                              onPressed: () {
+                                                getStatistics(
+                                                    _resultsList[index].uid,
+                                                    intervals[_resultsList[
+                                                            index]]!
+                                                        .elementAt(
+                                                            intervalIndex));
+                                              },
+                                              icon: const Icon(
+                                                Icons.bar_chart,
                                                 size: 32,
                                               ),
                                             ),

@@ -44,7 +44,7 @@ dependencies:
   firebase_core: ^1.10.0
   firebase_storage: ^10.1.0
   fluttertoast: ^8.0.8
-
+  percent_indicator: ^3.4.0
   # Add Authentication such as Google SignIn, Facebook SignIn, Apple SignIn, Phone Auth etc.
   firebase_auth: ^3.2.0
 
