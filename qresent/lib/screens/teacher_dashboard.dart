@@ -1,13 +1,18 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:excel/excel.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:intl/intl.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:qresent/model/attendance_model.dart';
 import 'package:qresent/model/course_model.dart';
 import 'package:qresent/model/user_model.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:qresent/screens/login_screen.dart';
-import 'package:excel/excel.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 import 'generate_qr.dart';
 
@@ -33,7 +38,7 @@ class _TeacherDashboardState extends State<TeacherDashboard> {
   List<CourseModel> _coursesList = [];
   List<CourseModel> _resultsList = [];
   Map<CourseModel, List<String>> intervals = {};
-
+  var excel = Excel.createExcel();
   @override
   void initState() {
     getCourses();
@@ -71,9 +76,66 @@ class _TeacherDashboardState extends State<TeacherDashboard> {
             GenerateQRPage(course: course, interval: interval)));
   }
 
+  Future<UserModel> getUser(String email) async {
+    UserModel studentTemp = UserModel();
+    await teachersRef
+        .where("Email", isEqualTo: email)
+        .get()
+        .then((QuerySnapshot snapshot) {
+      setState(() {
+        studentTemp = UserModel.fromMap(snapshot.docs[0].data());
+      });
+    });
+    return studentTemp;
+  }
+
   Future<void> exportAttendancyList(String course, String interval) async {
-    await attendancesRef.doc(course + " " + interval).get().then((value) {
+    await attendancesRef.doc(course + " " + interval).get().then((value) async {
+      final List<String> header = [
+        "First name",
+        "Last name",
+        "Email",
+        "Group",
+        "Type"
+      ];
       AttendanceModel attendance = AttendanceModel.fromMap(value.data());
+
+      for (var date in attendance.dates.entries) {
+        Sheet sheetObject = excel[date.key];
+        sheetObject.appendRow(header);
+        for (String email in date.value["present"]) {
+          UserModel currentStudent = await getUser(email);
+          List<String> row = [
+            currentStudent.firstName!,
+            currentStudent.lastName!,
+            currentStudent.email!,
+            currentStudent.group!,
+            "present"
+          ];
+          if (date.value["active"].contains(email)) {
+            row[4] = "active";
+          }
+          sheetObject.appendRow(row);
+        }
+      }
+
+      excel.delete("Sheet1");
+      if (kIsWeb) {
+        excel.save(
+            fileName: "attendance_list_" + course + "_" + interval + ".xlsx");
+      } else {
+        var fileBytes = excel.save();
+        var directory = await getApplicationDocumentsDirectory();
+        String filePath = "${directory.path}/attendance_list_" +
+            course +
+            "_" +
+            interval +
+            ".xlsx";
+
+        File(filePath)
+          ..createSync(recursive: true)
+          ..writeAsBytesSync(fileBytes!);
+      }
     });
   }
 
@@ -470,51 +532,62 @@ class _TeacherDashboardState extends State<TeacherDashboard> {
                                         Text(
                                           intervals[_resultsList[index]]!
                                               .elementAt(intervalIndex),
-                                        ),
+                                        )
                                       ],
                                     ),
-                                    Row(
+                                    Column(
                                       children: <Widget>[
-                                        IconButton(
-                                          onPressed: () {
-                                            createDeleteAlertDialog(
-                                              context,
-                                              _resultsList[index],
-                                              intervals[_resultsList[index]]!
-                                                  .elementAt(intervalIndex),
-                                            );
-                                          },
-                                          icon: const Icon(
-                                            Icons.delete,
-                                            color: Colors.red,
-                                            size: 32,
-                                          ),
+                                        Row(
+                                          children: [
+                                            IconButton(
+                                              onPressed: () {
+                                                createDeleteAlertDialog(
+                                                  context,
+                                                  _resultsList[index],
+                                                  intervals[
+                                                          _resultsList[index]]!
+                                                      .elementAt(intervalIndex),
+                                                );
+                                              },
+                                              icon: const Icon(
+                                                Icons.delete,
+                                                color: Colors.red,
+                                                size: 32,
+                                              ),
+                                            ),
+                                            IconButton(
+                                              onPressed: () {
+                                                generateQR(
+                                                  _resultsList[index].uid,
+                                                  intervals[
+                                                          _resultsList[index]]!
+                                                      .elementAt(intervalIndex),
+                                                );
+                                              },
+                                              icon: const Icon(
+                                                Icons.qr_code_2,
+                                                size: 32,
+                                              ),
+                                            ),
+                                          ],
                                         ),
-                                        IconButton(
-                                          onPressed: () {
-                                            generateQR(
-                                              _resultsList[index].uid,
-                                              intervals[_resultsList[index]]!
-                                                  .elementAt(intervalIndex),
-                                            );
-                                          },
-                                          icon: const Icon(
-                                            Icons.qr_code_2,
-                                            size: 32,
-                                          ),
-                                        ),
-                                        IconButton(
-                                          onPressed: () {
-                                            exportAttendancyList(
-                                              _resultsList[index].uid,
-                                              intervals[_resultsList[index]]!
-                                                  .elementAt(intervalIndex),
-                                            );
-                                          },
-                                          icon: const Icon(
-                                            Icons.download,
-                                            size: 32,
-                                          ),
+                                        Row(
+                                          children: [
+                                            IconButton(
+                                              onPressed: () {
+                                                exportAttendancyList(
+                                                  _resultsList[index].uid,
+                                                  intervals[
+                                                          _resultsList[index]]!
+                                                      .elementAt(intervalIndex),
+                                                );
+                                              },
+                                              icon: const Icon(
+                                                Icons.download,
+                                                size: 32,
+                                              ),
+                                            ),
+                                          ],
                                         ),
                                       ],
                                     ),
