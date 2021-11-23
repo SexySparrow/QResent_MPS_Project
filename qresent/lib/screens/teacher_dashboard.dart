@@ -7,6 +7,7 @@ import 'package:qresent/model/course_model.dart';
 import 'package:qresent/model/user_model.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:qresent/screens/login_screen.dart';
+import 'package:excel/excel.dart';
 
 import 'generate_qr.dart';
 
@@ -68,6 +69,12 @@ class _TeacherDashboardState extends State<TeacherDashboard> {
     Navigator.of(context).push(MaterialPageRoute(
         builder: (context) =>
             GenerateQRPage(course: course, interval: interval)));
+  }
+
+  Future<void> exportAttendancyList(String course, String interval) async {
+    await attendancesRef.doc(course + " " + interval).get().then((value) {
+      AttendanceModel attendance = AttendanceModel.fromMap(value.data());
+    });
   }
 
   getCourses() async {
@@ -495,7 +502,20 @@ class _TeacherDashboardState extends State<TeacherDashboard> {
                                             Icons.qr_code_2,
                                             size: 32,
                                           ),
-                                        )
+                                        ),
+                                        IconButton(
+                                          onPressed: () {
+                                            exportAttendancyList(
+                                              _resultsList[index].uid,
+                                              intervals[_resultsList[index]]!
+                                                  .elementAt(intervalIndex),
+                                            );
+                                          },
+                                          icon: const Icon(
+                                            Icons.download,
+                                            size: 32,
+                                          ),
+                                        ),
                                       ],
                                     ),
                                   ],
