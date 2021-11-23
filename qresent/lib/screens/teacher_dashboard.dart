@@ -7,6 +7,7 @@ import 'package:qresent/model/course_model.dart';
 import 'package:qresent/model/user_model.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:qresent/screens/login_screen.dart';
+import 'package:qresent/screens/show_statistics.dart';
 
 import 'generate_qr.dart';
 
@@ -68,6 +69,12 @@ class _TeacherDashboardState extends State<TeacherDashboard> {
     Navigator.of(context).push(MaterialPageRoute(
         builder: (context) =>
             GenerateQRPage(course: course, interval: interval)));
+  }
+
+  Future<void> getStatistics(String course, String interval) async {
+    Navigator.of(context).push(MaterialPageRoute(
+        builder: (context) =>
+            ShowStatistics(interval: course + " " + interval)));
   }
 
   getCourses() async {
@@ -470,6 +477,31 @@ class _TeacherDashboardState extends State<TeacherDashboard> {
                                       children: <Widget>[
                                         IconButton(
                                           onPressed: () {
+                                            generateQR(
+                                              _resultsList[index].uid,
+                                              intervals[_resultsList[index]]!
+                                                  .elementAt(intervalIndex),
+                                            );
+                                          },
+                                          icon: const Icon(
+                                            Icons.qr_code_2,
+                                            size: 32,
+                                          ),
+                                        ),
+                                        IconButton(
+                                          onPressed: () {
+                                            getStatistics(
+                                                _resultsList[index].uid,
+                                                intervals[_resultsList[index]]!
+                                                    .elementAt(intervalIndex));
+                                          },
+                                          icon: const Icon(
+                                            Icons.bar_chart,
+                                            size: 32,
+                                          ),
+                                        ),
+                                        IconButton(
+                                          onPressed: () {
                                             createDeleteAlertDialog(
                                               context,
                                               _resultsList[index],
@@ -483,19 +515,6 @@ class _TeacherDashboardState extends State<TeacherDashboard> {
                                             size: 32,
                                           ),
                                         ),
-                                        IconButton(
-                                          onPressed: () {
-                                            generateQR(
-                                              _resultsList[index].uid,
-                                              intervals[_resultsList[index]]!
-                                                  .elementAt(intervalIndex),
-                                            );
-                                          },
-                                          icon: const Icon(
-                                            Icons.qr_code_2,
-                                            size: 32,
-                                          ),
-                                        )
                                       ],
                                     ),
                                   ],
