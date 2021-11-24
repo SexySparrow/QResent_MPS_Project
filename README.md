@@ -12,10 +12,10 @@ QResent aims to modernize the current way many faculties use to create and monit
 | Member              | Role                  |
 | :---                |    :----:             |
 | Adrian Brabete      | Project Manager       |
-| Andreea Trasnea     | Team Leader           |
-| Bogdan Popescu      | Developer/Tester      |
-| Stefan Constandache | Developer/Tester      |
-| Andreea Pantelimon  | Developer/Tester      |
+| Stefan Constandache | Team Leader           |
+| Bogdan Popescu      | Tester                |
+| Andreea Trasnea     | Developer             |
+| Andreea Pantelimon  | Developer             |
 
 ## The Software Stack 
 ---
